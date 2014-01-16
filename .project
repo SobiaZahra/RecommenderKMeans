@@ -14,11 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>netflix</name>
-			<type>2</type>
-			<location>C:/Users/Sobia/workspaceShared111/KMeansInitialization/src/netflix/netflix</location>
-		</link>
-	</linkedResources>
 </projectDescription>

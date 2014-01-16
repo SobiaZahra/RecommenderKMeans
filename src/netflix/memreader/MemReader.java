@@ -3,8 +3,10 @@ package netflix.memreader;
 
 import java.util.*;
 import java.io.*;
+
+//import thesis.FeatureReader;
+//import thesis.FeatureWriter;
 import netflix.utilities.*;							//some utilities
-import netflix.memreader.FeatureReader;
 
 import cern.colt.list.*;
 import cern.colt.map.*;
@@ -67,7 +69,7 @@ public class MemReader implements Serializable
     
     private 	String smlGenrePath;
     private 	String smlFeaturePath;
-    private     FeatureWriter myFeatures;
+//    private     FeatureWriter myFeatures;
     
     //For bc dataset
     public boolean     isBC;
@@ -640,7 +642,7 @@ public class MemReader implements Serializable
     {
 
         MemReader reader = new MemReader();
-        FeatureWriter frw = new FeatureWriter();
+//        FeatureWriter frw = new FeatureWriter();
         
         //String smlGenrePath= "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\sml_Genres.dat";
         
@@ -776,35 +778,35 @@ public class MemReader implements Serializable
   }//end of function
     
 /************************************************************************************************************************/
-
-    public void readFeaturesFromMem()
-    {
-    	
-    	//call static method of the featureWriter class and deserialize the object
-       // myFeatures = FeatureWriter.deserialize(smlFeaturePath);
-
-        //Now assign hashes from other file to MemReader hashes        
-        movieToKeywords	 		= myFeatures.getKeywordsFeatures();
-        movieToTags     		= myFeatures.getTagsFeatures();
-        movieToFeatures    	    = myFeatures.getAllFeatures();
-        movieToUnStemmedFeatures= myFeatures.getAllUnStemmedFeatures();
-        
-		movieToPlots	 		= myFeatures.getPlotsFeatures();
-		movieToPrintedReviews 	= myFeatures.getPrintedReviewsFeatures();
-		movieToCertificates     = myFeatures.getCertificatesFeatures();
-		movieToBiography 		= myFeatures.getBiographyFeatures();
-		movieToColors 			= myFeatures.getColorsFeatures();
-		movieToLanguages 		= myFeatures.getLanguagesFeatures();
-		movieToVotes 			= myFeatures.getVotesFeatures();
-		movieToRatings 			= myFeatures.getRatingsFeatures();
-		movieToActors 			= myFeatures.getActorsFeatures();
-		movieToDirectors		= myFeatures.getDirectorsFeatures();
-		movieToProducers		= myFeatures.getProducersFeatures();
-		movieToGenres			= myFeatures.getGenresFeatures();	
-		moviesNotMatched	    = myFeatures.getNonMatchingMovies();
-    }
-    
-    
+//
+//    public void readFeaturesFromMem()
+//    {
+//    	
+//    	//call static method of the featureWriter class and deserialize the object
+//       // myFeatures = FeatureWriter.deserialize(smlFeaturePath);
+//
+//        //Now assign hashes from other file to MemReader hashes        
+//        movieToKeywords	 		= myFeatures.getKeywordsFeatures();
+//        movieToTags     		= myFeatures.getTagsFeatures();
+//        movieToFeatures    	    = myFeatures.getAllFeatures();
+//        movieToUnStemmedFeatures= myFeatures.getAllUnStemmedFeatures();
+//        
+//		movieToPlots	 		= myFeatures.getPlotsFeatures();
+//		movieToPrintedReviews 	= myFeatures.getPrintedReviewsFeatures();
+//		movieToCertificates     = myFeatures.getCertificatesFeatures();
+//		movieToBiography 		= myFeatures.getBiographyFeatures();
+//		movieToColors 			= myFeatures.getColorsFeatures();
+//		movieToLanguages 		= myFeatures.getLanguagesFeatures();
+//		movieToVotes 			= myFeatures.getVotesFeatures();
+//		movieToRatings 			= myFeatures.getRatingsFeatures();
+//		movieToActors 			= myFeatures.getActorsFeatures();
+//		movieToDirectors		= myFeatures.getDirectorsFeatures();
+//		movieToProducers		= myFeatures.getProducersFeatures();
+//		movieToGenres			= myFeatures.getGenresFeatures();	
+//		moviesNotMatched	    = myFeatures.getNonMatchingMovies();
+//    }
+//    
+//    
 /************************************************************************************************************************/
 
     //Write First File Into second destination
@@ -828,7 +830,7 @@ public class MemReader implements Serializable
 		   	  reader.readGenre(smlGenrePath);
 		   	
 		   	//Read Features from Memory
-	       	   reader.readFeaturesFromMem();   	
+//	       	   reader.readFeaturesFromMem();   	
 	   	}
 	   	
        	//Serialize the mem reader object with all the info we have (features etc)

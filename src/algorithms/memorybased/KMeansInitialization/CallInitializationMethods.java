@@ -18,7 +18,7 @@ public abstract class CallInitializationMethods implements KMeansVariant
 {
 	
 	// initialize class here 
-	public KMeanRecNF 						kRec;
+	public KMeanRecommender 						kRec;
 	public SimpleKMeans		    			simpleKTree;
 	public MemHelper 	helper;
 
@@ -43,8 +43,8 @@ public abstract class CallInitializationMethods implements KMeansVariant
 	public CallInitializationMethods()     
 	{
 
-		helper =KMeanRecNF.trainMMh;
-		kRec = new KMeanRecNF();
+		helper =KMeanRecommender.trainMMh;
+		kRec = new KMeanRecommender();
 		finalClusters = new ArrayList<IntArrayList>(); //Creates ArrayList with initial default capacity 10.
 		uidToCluster  = new OpenIntIntHashMap();       // <E> is for an element in the arraylist
 		clusterMap 	  = new OpenIntIntHashMap();
@@ -492,177 +492,11 @@ public abstract class CallInitializationMethods implements KMeansVariant
      * @param  k  The number of centroids (clusters) desired. 
      * @return A List of randomly chosen centroids. 
      */
-	@Override
+	
 	public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset, int k, double cliqueAverage)
 	{
-		methodVariant = variant;
-		if (methodVariant==1)
-		{
 
-			timer.start();
-			KMeansVariant simpleKTree =new SimpleKMeans(helper);
-			returnedCentroids = simpleKTree.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();   
-
-			System.out.println("KMeans Random centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==2)
-		{
-			timer.start();
-			KMeansVariant simpleKPlusTree =new SimpleKMeansPlus(helper);
-			returnedCentroids = simpleKPlusTree.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop(); 
-
-			System.out.println("KMeans Plus centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==3)
-		{
-			timer.start();
-			KMeansVariant simpleKModifiedPlusTree =new SimpleKMeanModifiedPlus(helper);
-			returnedCentroids = simpleKModifiedPlusTree.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Modified Plus centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==4)
-		{
-			timer.start();
-			KMeansVariant simpleKPlusAndPowerTree =new SimpleKMeansPlusAndPower(helper);
-			returnedCentroids = simpleKPlusAndPowerTree.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Plus & Power centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==9)
-		{
-			timer.start();
-			KMeansVariant simpleKDistance =new SimpleKMeansQuantile(helper);
-			returnedCentroids = simpleKDistance.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Quantiles centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==10)
-		{	
-			timer.start();
-			KMeansVariant simpleKNormal =new SimpleKMeansNormalDistribution(helper);
-			returnedCentroids = simpleKNormal.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Normal distribution centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==11)
-		{	
-			timer.start();
-			KMeansVariant simpleVariance =new SimpleKMeansVariance(helper);
-			returnedCentroids = simpleVariance.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Variance centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==12)
-		{
-			timer.start();
-			KMeansVariant simpleUniform =new SimpleKMeansUniform(helper);
-			returnedCentroids = simpleUniform.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Uniform Distribution centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==13)
-		{
-			timer.start();
-			KMeansVariant simpleDensity =new SimpleKMeansDensity(helper);
-			returnedCentroids = simpleDensity.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Density centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==14)
-		{
-			timer.start();
-			KMeansVariant simpleSample =new SimpleKMeansSamples(helper);
-			returnedCentroids = simpleSample.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Samples centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==15)
-		{
-			timer.start();
-			KMeansVariant simpleLog =new SimpleKMeansLog(helper);
-			returnedCentroids = simpleLog.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Log centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==16)
-		{
-			timer.start();
-			KMeansVariant simpleHGeo =new SimpleKMeansHyperGeometric(helper);
-			returnedCentroids = simpleHGeo.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Hyper Geometric centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==17)
-		{
-			timer.start();
-			KMeansVariant simplePoisson =new SimpleKMeansPoisson(helper);
-			returnedCentroids = simplePoisson.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Poisson Distribution centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==18)
-		{
-			timer.start();
-			KMeansVariant simplePlusPlus =new SimpleKMeansPlusPlus(helper);
-			returnedCentroids = simplePlusPlus.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Plus Plus centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}
-
-		if (methodVariant==19)
-		{
-			timer.start();
-			KMeansVariant simpleSinglePass =new SimpleKMeansSinglePass(helper);
-			returnedCentroids = simpleSinglePass.chooseCentroids(variant, dataset, k, cliqueAverage);
-			timer.stop();
-
-			System.out.println("KMeans Single Pass centroids took " + timer.getTime() + " s to select");    	
-			timer.resetTimer();
-		}  
-
-		return returnedCentroids;
+		return null;
 
 	}
 	

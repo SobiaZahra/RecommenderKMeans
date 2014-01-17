@@ -338,114 +338,66 @@ public class KMeanRecommender
 	 */
 	public void callKTree(MemHelper helper, int callNo, int MAX_ITERATIONS )     
 	{
-		//KMeansVariant clusteringSeedSelection = null;
 		
 		timer.start();
-		if (methodVariant==1)
-		{
-			
-			 clusteringSeedSelection = new SimpleKMeans(helper);
-		
+		if (methodVariant==1) {
+				clusteringSeedSelection = new SimpleKMeans(helper);
 		}
 
-		if (methodVariant==2)
-		{
-		
+		if (methodVariant==2) {
 			 clusteringSeedSelection =new SimpleKMeansPlus(helper);
-		
 		}
 
-		if (methodVariant==3)
-		{
-			
+		if (methodVariant==3) {
 			 clusteringSeedSelection =new SimpleKMeanModifiedPlus(helper);
-			
 		}
 
-		if (methodVariant==4)
-		{
-			
+		if (methodVariant==4) { 
 			 clusteringSeedSelection =new SimpleKMeansPlusAndPower(helper);
-			
 		}
 
-		if (methodVariant==9)
-		{
-		
-			 clusteringSeedSelection =new SimpleKMeansQuantile(helper);
+		if (methodVariant==9) {
+			clusteringSeedSelection =new SimpleKMeansQuantile(helper);
 		}
 
-		if (methodVariant==10)
-		{	
-			
-			 clusteringSeedSelection =new SimpleKMeansNormalDistribution(helper);
-			
+		if (methodVariant==10) {	
+			clusteringSeedSelection =new SimpleKMeansNormalDistribution(helper);
 		}
 
-		if (methodVariant==11)
-		{	
-			
+		if (methodVariant==11) {	
 			 clusteringSeedSelection =new SimpleKMeansVariance(helper);
-			
 		}
 
-		if (methodVariant==12)
-		{
-		
+		if (methodVariant==12) {
 			 clusteringSeedSelection =new SimpleKMeansUniform(helper);
-		
 		}
 
-		if (methodVariant==13)
-		{
-			
+		if (methodVariant==13) {
 			 clusteringSeedSelection =new SimpleKMeansDensity(helper);
-			
 		}
 
-		if (methodVariant==14)
-		{
-			
+		if (methodVariant==14) {
 			 clusteringSeedSelection =new SimpleKMeansSamples(helper);
-			
 		}
 
-		if (methodVariant==15)
-		{
-		
+		if (methodVariant==15) {
 			 clusteringSeedSelection =new SimpleKMeansLog(helper);
 		}
 
-		if (methodVariant==16)
-		{
-			
+		if (methodVariant==16) {
 			 clusteringSeedSelection =new SimpleKMeansHyperGeometric(helper);
-			
 		}
 
-		if (methodVariant==17)
-		{
-			
+		if (methodVariant==17) {
 			 clusteringSeedSelection =new SimpleKMeansPoisson(helper);
-			
 		}
 
-		if (methodVariant==18)
-		{
-			
+		if (methodVariant==18) {
 			clusteringSeedSelection =new SimpleKMeansPlusPlus(helper);
-			
 		}
 
-		if (methodVariant==19)
-		{
-		
+		if (methodVariant==19) {
 			clusteringSeedSelection =new SimpleKMeansSinglePass(helper);
-			
-		
-
-			    	
-			
 		}  
 
 		System.out.println("KMeans version" +clusteringSeedSelection.getName(methodVariant)+" Single Pass centroids took " + timer.getTime() + " s to select");

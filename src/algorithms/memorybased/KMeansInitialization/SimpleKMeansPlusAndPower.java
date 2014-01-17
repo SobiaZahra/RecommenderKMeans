@@ -233,8 +233,6 @@ public class SimpleKMeansPlusAndPower implements KMeansVariant
 public String getName(int variant) {
 	
 	String name = null;
-	KMeansVariant var = new KMeanRecommender();
-	name= var.getName(variant);
 	return name;
 }
 

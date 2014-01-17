@@ -493,12 +493,12 @@ public abstract class CallInitializationMethods implements KMeansVariant
      * @return A List of randomly chosen centroids. 
      */
 	
-	public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset, int k, double cliqueAverage)
-	{
-
-		return null;
-
-	}
+//	public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset, int k, double cliqueAverage)
+//	{
+//
+//		return null;
+//
+//	}
 	
 //	
 

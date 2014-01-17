@@ -22,7 +22,7 @@ import netflix.utilities.*;
 
 
 /************************************************************************************************/
-public class KMeanRecommender extends CallInitializationMethods
+public class KMeanRecommender 
 {
 	// initialize class here 
 	private CallInitializationMethods		callMethod;
@@ -64,6 +64,7 @@ public class KMeanRecommender extends CallInitializationMethods
 
 	// version of the seed selection to be called
 	private int methodVariant  = 0;
+	KMeansVariant clusteringSeedSelection = null;
 	
 	//Related to finding the gray sheep user's predictions
 
@@ -191,7 +192,7 @@ public class KMeanRecommender extends CallInitializationMethods
    ///////////////////////''''''''''''''''''''''''''''
 	public KMeanRecommender()    
 	{
-    	super(trainMMh);
+    	//super(trainMMh);
 
 //		totalNonRecSamples = 0;
 //		totalRecSamples 	= 0;
@@ -335,9 +336,9 @@ public class KMeanRecommender extends CallInitializationMethods
 	/**
 	 *  It initialise an object and call the method for building the three 
 	 */
-	public void callKTree(int callNo, int MAX_ITERATIONS )     
+	public void callKTree(MemHelper helper, int callNo, int MAX_ITERATIONS )     
 	{
-		KMeansVariant clusteringSeedSelection = null;
+		//KMeansVariant clusteringSeedSelection = null;
 		
 		timer.start();
 		if (methodVariant==1)
@@ -447,7 +448,7 @@ public class KMeanRecommender extends CallInitializationMethods
 			
 		}  
 
-		System.out.println("KMeans version" + getName(methodVariant)+" Single Pass centroids took " + timer.getTime() + " s to select");
+		System.out.println("KMeans version" +clusteringSeedSelection.getName(methodVariant)+" Single Pass centroids took " + timer.getTime() + " s to select");
 		timer.stop();
 		timer.resetTimer();
 		
@@ -513,11 +514,11 @@ public class KMeanRecommender extends CallInitializationMethods
 				{
 					timer.start();	              
 
-					clusteringSeedSelection.cluster(KMeansOrKMeansPlus,kClusters, callNo, MAX_ITERATIONS, simVersion);       
+					callMethod.cluster(KMeansOrKMeansPlus,kClusters, callNo, MAX_ITERATIONS, simVersion);       
 					timer.stop();
 
 					kMeanTime = timer.getTime();
-					System.out.println( getName (KMeansOrKMeansPlus) + " -->  took " + timer.getTime() + " s to build");    	
+					System.out.println( clusteringSeedSelection.getName (KMeansOrKMeansPlus) + " -->  took " + timer.getTime() + " s to build");    	
 					timer.resetTimer();
 				}
 
@@ -915,10 +916,10 @@ public class KMeanRecommender extends CallInitializationMethods
 						simpleKPlusAndLogPowerTree_NoSimThr = new SimpleKMeansPlusAndLogPower(trainMMh);
 					}
 				
-					else           
+					//else           
 						//callMethod = new CallInitializationMethods(trainMMh);   
 					
-						callMethod = new KMeanRecommender(super.helper);
+						//callMethod = new KMeanRecommender(super.helper);
 						
 
 				}
@@ -931,7 +932,7 @@ public class KMeanRecommender extends CallInitializationMethods
 
 
 				//Build clusters
-				callKTree (myFlg , noItr);										//it is converging after 6-7 iterations	
+				callKTree (trainMMh, myFlg , noItr);										//it is converging after 6-7 iterations	
 
 				testWithMemHelper(testMMh,10);	
 				writeResults(KMeansOrKMeansPlus) ;
@@ -1241,8 +1242,8 @@ public class KMeanRecommender extends CallInitializationMethods
 	{
 
 		try {
-			
-			variant = getName(k);
+	
+			variant = clusteringSeedSelection.getName(k);
 
 
 			//***********
@@ -1302,50 +1303,50 @@ public class KMeanRecommender extends CallInitializationMethods
 	/*******************************************************
 	 * naming variants
 	 */
-	@Override
-	public String getName(int k)
-	
-	
-	{
-		String variant= null;
-		if(k==1) 	         
-			variant = "SimpleKMeans";	
-		if(k==2)
-			variant = "SimpleKMeansPlus";
-			        
-		if(k==3)
-			variant = "SimpleKMeanModifiedPlus";
-		
-		if(k==4)
-			variant = "SimpleKMeansPlusAndPower";
-		  
-		if(k==5)   				
-			variant = "SimpleKMeansPlusAndLogPower";
-	
-		if(k==9) 
-			variant = "SimpleKMeansQuantile";
-		if(k==10)
-			variant = "SimpleKMeansNormalDistribution";
-		if(k==11)  
-			variant = "SimpleKMeansVariance";	
-		if(k==12) 
-			variant = "SimpleKMeansUniform";
-		if(k==13) 
-			variant = "SimpleKMeansDensity";
-		if(k==14)  
-			variant = "SimpleKMeansSamples";
-		if(k==15)  
-			variant = "SimpleKMeansLog";
-		if(k==16)  
-			variant = "SimpleKMeansHyperGeometric";
-		if(k==17) 
-			variant = "SimpleKMeansPoisson";
-		if(k==18) 
-			variant = "SimpleKMeansPlusPlus";
-		if(k==19) 
-			variant = "SimpleKMeansSinglePass";
-		return variant;
-		
-	}
+//	@Override
+//	public String getName(int k)
+//	
+//	
+//	{
+//		String variant= null;
+//		if(k==1) 	         
+//			variant = "SimpleKMeans";	
+//		if(k==2)
+//			variant = "SimpleKMeansPlus";
+//			        
+//		if(k==3)
+//			variant = "SimpleKMeanModifiedPlus";
+//		
+//		if(k==4)
+//			variant = "SimpleKMeansPlusAndPower";
+//		  
+//		if(k==5)   				
+//			variant = "SimpleKMeansPlusAndLogPower";
+//	
+//		if(k==9) 
+//			variant = "SimpleKMeansQuantile";
+//		if(k==10)
+//			variant = "SimpleKMeansNormalDistribution";
+//		if(k==11)  
+//			variant = "SimpleKMeansVariance";	
+//		if(k==12) 
+//			variant = "SimpleKMeansUniform";
+//		if(k==13) 
+//			variant = "SimpleKMeansDensity";
+//		if(k==14)  
+//			variant = "SimpleKMeansSamples";
+//		if(k==15)  
+//			variant = "SimpleKMeansLog";
+//		if(k==16)  
+//			variant = "SimpleKMeansHyperGeometric";
+//		if(k==17) 
+//			variant = "SimpleKMeansPoisson";
+//		if(k==18) 
+//			variant = "SimpleKMeansPlusPlus";
+//		if(k==19) 
+//			variant = "SimpleKMeansSinglePass";
+//		return variant;
+//		
+//	}
 
 }//end class

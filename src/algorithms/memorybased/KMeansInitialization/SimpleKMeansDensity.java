@@ -11,7 +11,7 @@ import cern.colt.map.*;
 
 
 /************************************************************************************************/
-public class SimpleKMeansDensity  implements KMeansVariant
+public class SimpleKMeansDensity  extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/
 
 {
@@ -240,9 +240,7 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 @Override
 public String getName(int variant) {
 	
-	String name = null;
-	KMeansVariant var = new KMeanRecommender();
-	name= var.getName(variant);
+	String name = "Write my name here pls";
 	return name;
 }
      

@@ -8,9 +8,8 @@ import netflix.memreader.*;
 import cern.colt.list.*;
 import cern.colt.map.*;
 
-
 /************************************************************************************************/
-public class SimpleKMeansVariance  extends CallInitializationMethods implements KMeansVariant
+public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/ 
 
 {
@@ -27,7 +26,7 @@ public class SimpleKMeansVariance  extends CallInitializationMethods implements 
 	     * Builds the RecTree and saves the resulting clusters.
 	     */
 	    
-	    public SimpleKMeansVariance(MemHelper helper)    
+	    public SimpleKMeansVarianceCorrected(MemHelper helper)    
 	    {
 	        this.helper   = helper;
 
@@ -62,12 +61,11 @@ public class SimpleKMeansVariance  extends CallInitializationMethods implements 
 	    	int C					 = 0;						// Centroid			
 	    	int possibleC			 = 0;						// A point from dataset
 	    	double possibleCSim		 = 0;	 					// Sim of the point from the dataset
-	    	double  avg				= helper.getGlobalAverage();
-	    	int avgI					= (int)avg;
+	    	double  avg				 = helper.getGlobalAverage();
+	    	
 
 	    	for(int i = 0; i < k; i++) 					//for total number of clusters         
 	    	{
-
 	    		OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
 
 	    		//------------------------------
@@ -78,10 +76,11 @@ public class SimpleKMeansVariance  extends CallInitializationMethods implements 
 	    		{
 	    			//Get a point
 	    			possibleC  = dataset.get(j);		
-	    			possibleCSim =  findSimPCCBetweenACentroidAndUser(possibleC, avgI);
+	    			possibleCSim = findEucledianDistanceBetweenAvgAndEntity(avg, possibleC, true);
 	    			uidToCentroidSim.put(possibleC, possibleCSim);
 
 	    		}
+	    		
 	    		IntArrayList myUsers 	 	= uidToCentroidSim.keys();
 	    		DoubleArrayList myWeights    =uidToCentroidSim.values();      		   
 	    		uidToCentroidSim.pairsSortedByValue(myUsers, myWeights);
@@ -108,7 +107,6 @@ public class SimpleKMeansVariance  extends CallInitializationMethods implements 
 
 	    		chosenCentroids.add( new Centroid (C,helper));
 	    		this.centroids = chosenCentroids; 
-
 	    	}
 
 	    	return chosenCentroids;
@@ -116,14 +114,14 @@ public class SimpleKMeansVariance  extends CallInitializationMethods implements 
 		}
 
  
-        		//----------------
-        		//  get variant name
-        		// ---------------
+        //----------------
+        //  get variant name
+        // ---------------
 
       	@Override
       	public String getName(int variant) {
    
-      		return "SimpleKMeansVariance";
+      		return "SimpleKMeansVarianceCorrected";
       	}
  /*******************************************************************************************************/
  

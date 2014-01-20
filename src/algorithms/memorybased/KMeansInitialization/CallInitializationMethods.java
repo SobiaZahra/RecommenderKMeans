@@ -481,7 +481,11 @@ public abstract class CallInitializationMethods implements KMeansVariant
 
 	  
     /*******************************************************************************************************/
-    /**
+    
+	// here, centroid and point must be USERS_IDS
+	// So in this sense it can not be used when we have avg on one side and user id on the other side
+	
+	/**
      * Find the sim between a centroid and a point, we can use VS and PCC for it
      * @param int center, int point  
      * @return double similarity
@@ -587,12 +591,12 @@ public abstract class CallInitializationMethods implements KMeansVariant
      * @param users, true= distance between two users; false = distance between two movies
      * @return
      */
-    public double  findEucledianDistanceBetweenTwoEntities (int e1, int e2, boolean users)
+    public double  findEucledianDistanceBetweenTwoEntities (int e1, int e2, boolean isUser)
     {	 	 
    	    double functionResult = 0.0;
    	    double rating1, rating2;
         
-        ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating(e1,e2, users);
+        ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating(e1, e2, isUser);
         if(ratings.size() ==0)
         	return 0;
         
@@ -605,8 +609,34 @@ public abstract class CallInitializationMethods implements KMeansVariant
         
         return  functionResult;     	         	  	 
     }
+  
+    /**
+     * 
+     * @param avg
+     * @param e2
+     * @param isUser
+     * @return
+     */
+    public double  findEucledianDistanceBetweenAvgAndEntity (double avg, int e2, boolean isUser)
+    {	 	 
+   	    double functionResult = 0.0;
+   	    double rating1, rating2;
+   	 
+   	    ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating_ForAvgAndEntity(e2, isUser);
+   	    if(ratings.size() ==0)
+   	    	return 0;
+   	    
+        for (Pair pair : ratings)         
+        {
+            rating1 = avg ;
+            rating2 = (double) MemHelper.parseRating(pair.b) ;
+            functionResult += Math.pow((rating1 - rating2), 2);
+        }
+        
+        return  functionResult;     	         	  	 
+    }
     
-    //------------------------------------------------------
+    
     
 /*******************************************************************************************************/
 

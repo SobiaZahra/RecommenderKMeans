@@ -9,7 +9,11 @@ import netflix.memreader.*;
 import cern.colt.list.*;
 import cern.colt.map.*;
 
-
+/**
+ * Class that uses density as parameter to chose the initial seeds for KMeans clustering
+ * @author Musi
+ * 
+ */
 /************************************************************************************************/
 public class SimpleKMeansDensity  extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/
@@ -17,13 +21,7 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 {
 
 	    private MemHelper 	helper;
-
-	    ArrayList<Centroid> centroids;
-	    ArrayList<Centroid> newCentroids;
-	    OpenIntIntHashMap   clusterMap;
-	    boolean 			converged;					  //Algorithm converged or not
-	    int 				simVersion;
-	    
+	   
 /************************************************************************************************/
 
 	    /**

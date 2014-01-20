@@ -1197,8 +1197,8 @@ public class MemHelper
      * blocks (depending)
      */
     
-    public ArrayList<Pair> innerJoinOnMoviesOrRating(int a, int b, boolean which)     
-    {
+    public ArrayList<Pair> innerJoinOnMoviesOrRating(int a, int b, boolean which)  {
+    	
         // Get the movies/users for each parameter
         LongArrayList left, right;
         
@@ -1219,10 +1219,8 @@ public class MemHelper
         // Join the two using a sort-merge join
         // Assumes that they two lists are already sorted
         
-        ArrayList<Pair> match = new ArrayList<Pair>();  //It has defualt size of zero
-        
+        ArrayList<Pair> match = new ArrayList<Pair>();  //It has default size of zero
         int leftIndex = 0, rightIndex = 0;       
-        
         while (leftIndex < left.size() && rightIndex < right.size())        
         {
         	//let us suppose , we got list of movies (i.e. left list and right list of movies)
@@ -1244,6 +1242,56 @@ public class MemHelper
         	{
                 rightIndex++;
             }
+        }
+
+        return match;
+    }
+   
+ 
+    /**
+     * Inner joins together the data from one average (this parameter is not required to send) 
+     * uid or mid (second parameter)
+     * To explain: if you want to find all the movies in common
+     * between two users, you'd put true into onMovies, then enter
+     * in two different user ids into the other parameters.  
+     * you now have 
+     * 
+     * @param avg movie id or user id one
+     * @param b movie id or user id two
+     * @param which true if the parameters are user ids, false if the
+     * parameters are movie ids
+     * @return a join between the two users/movies, as uid/rating or mid/rating
+     * blocks (depending)
+     */
+    
+    public ArrayList<Pair> innerJoinOnMoviesOrRating_ForAvgAndEntity(int b, boolean which)  {
+    	
+        // Get the movies/users for each parameter
+        LongArrayList right;
+        
+        //Do they returns the sorted (in ascending order?)????
+        
+        if(which) //parameters passed are user ids        
+        {
+          
+            right = getMoviesSeenByUser(b);		//list of movies
+        }
+        
+        else //As is case with item based CF, (similarities between items)         
+        {
+          
+            right = getUsersWhoSawMovie(b);		//list of users
+        }
+
+     
+        ArrayList<Pair> match = new ArrayList<Pair>();  //It has default size of zero
+        int  rightIndex = 0;
+        
+        // We have average as first vector and the the other vector is given 
+        while (rightIndex < right.size())  {      	
+        	 match.add(new Pair (right.getQuick(rightIndex), right.getQuick(rightIndex)));   		
+        	 rightIndex++;
+            
         }
 
         return match;

@@ -176,12 +176,12 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 		//  get variant name
 		// ---------------
 
-@Override
-public String getName(int variant) {
+	@Override
+	public String getName(int variant) {
+		
 	
-
-	return "SimpleKMeansPlus";
-}
+		return "SimpleKMeansPlus";
+	}
 
  /*******************************************************************************************************/
  

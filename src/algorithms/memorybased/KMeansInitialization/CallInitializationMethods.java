@@ -436,7 +436,6 @@ public abstract class CallInitializationMethods implements KMeansVariant
 
 	public static double findSimWithOtherClusters(int uid, int i)
 	{
-
 		double distance =0.0; 
 		
 		if(simVersion==1)
@@ -579,6 +578,32 @@ public abstract class CallInitializationMethods implements KMeansVariant
        	return 0;			 
        
    	 
+    }
+    
+    /**
+     * 
+     * @param e1, entity one
+     * @param e2, entity two
+     * @param users, true= distance between two users; false = distance between two movies
+     * @return
+     */
+    public double  findEucledianDistanceBetweenTwoEntities (int e1, int e2, boolean users)
+    {	 	 
+   	    double functionResult = 0.0;
+   	    double rating1, rating2;
+        
+        ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating(e1,e2, users);
+        if(ratings.size() ==0)
+        	return 0;
+        
+        for (Pair pair : ratings)         
+        {
+            rating1 = (double) MemHelper.parseRating(pair.a) ;
+            rating2 = (double) MemHelper.parseRating(pair.b) ;
+            functionResult += Math.pow((rating1 - rating2), 2);
+        }
+        
+        return  functionResult;     	         	  	 
     }
     
     //------------------------------------------------------

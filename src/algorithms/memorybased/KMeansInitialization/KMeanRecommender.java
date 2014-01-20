@@ -26,8 +26,6 @@ public class KMeanRecommender
 {
 	// initialize class here 
 	private CallInitializationMethods		callMethod;
-	//private MyRecTree 						mixedTree;
-
 	private SimpleKMeansPlusAndLogPower		simpleKPlusAndLogPowerTree;
 	private SimpleKMeansPlusAndLogPower		simpleKPlusAndLogPowerTree_NoSimThr;
 
@@ -39,43 +37,33 @@ public class KMeanRecommender
 	static MemHelper 			trainMMh;
 	MemHelper 			allHelper;
 	MemHelper 			testMMh;
-//	static MemHelper 			helper;
 	MeanOrSD			MEANORSD;
 	Timer227 			timer;
 	FilterAndWeight		myUserBasedFilter;   //Filter and Weight, for User-based CF
 	ItemItemRecommender	myItemRec;		     //item-based CF    
 
-//	private int 		totalNonRecSamples;	 //Total number of sample for which we did not recommend anything
-//	private int 		totalRecSamples;
-//	private int 		howMuchClusterSize;
-//	private double 		threshold = 0.1;
+
 	private long 		kMeanTime;
 	private int         kClusters;
-	BufferedWriter      writeData1;
-	BufferedWriter      writeData2;
-	BufferedWriter      writeData3;
+
+	BufferedWriter      writeData;
 
 	private String      myPath;
-//	private String      SVDPath;
 	private int         totalNan=0;
 	private int         totalNegatives=0;
 	private int			KMeansOrKMeansPlus; 
 	private int			simVersion;
+	ArrayList<Centroid> centroids;
 
 	// version of the seed selection to be called
-	private int methodVariant  = 0;
-	KMeansVariant clusteringSeedSelection = null;
+
+	public KMeansVariant clusteringSeedSelection = null;
 	
 	//Related to finding the gray sheep user's predictions
 
 	private int			powerUsersThreshold;					// power user size
 	private double		simThreshold;							//
 	private int			numberOfneighbours;						// no. of neighbouring cluster for an active user
-
-	//Answered
-//	private int 		totalPerfectAnswers;
-//	private int 		totalAnswers;
-//	private int			totalIterations;						//no. of iterations required in the KMeans clustering 
 
 	//Regarding Results
 	double 								MAE;
@@ -110,8 +98,6 @@ public class KMeanRecommender
 	double              array_Coverage[][];
 	double              array_ROC[][];
 	double              array_BuildTime[][];
-	double				array_GSUSamples[][];			//gs users found in [gsu][all folds]
-	double				array_GSU[][];					//gs samples found in [gsu][all folds]
 
 
 	double              array_Precision[][][]; 		   //[topnN][gsu][fold]
@@ -125,9 +111,7 @@ public class KMeanRecommender
 	double				gridResults_Mean_NMAEPerUser[];
 	double				gridResults_Mean_RMSE[];
 	double				gridResults_Mean_RMSEPerUser[];
-	double				gridResults_Mean_ROC[];
-	double				gridResults_Mean_GSU[];
-	double				gridResults_Mean_GSUSamples[];		//GSU and Samples			
+	double				gridResults_Mean_ROC[];		
 
 	double				gridResults_Mean_Precision[][];   	//[TOPn][][]
 	double				gridResults_Mean_Recall[][];
@@ -140,9 +124,7 @@ public class KMeanRecommender
 	double				gridResults_Sd_NMAEPerUser[];
 	double				gridResults_Sd_RMSE[];
 	double				gridResults_Sd_RMSEPerUser[];
-	double				gridResults_Sd_ROC[];
-	double				gridResults_sd_GSU[];
-	double				gridResults_sd_GSUSamples[];		//GSU and Samples			
+	double				gridResults_Sd_ROC[];			
 
 	double				gridResults_Sd_Precision[][];
 	double				gridResults_Sd_Recall[][];
@@ -183,19 +165,9 @@ public class KMeanRecommender
 
 	/************************************************************************************************/
 
-	public KMeanRecommender(MemHelper helper)
-	{
-		super();	
-		
-	}
-
-   ///////////////////////''''''''''''''''''''''''''''
 	public KMeanRecommender()    
 	{
-    	//super(trainMMh);
 
-//		totalNonRecSamples = 0;
-//		totalRecSamples 	= 0;
 //		howMuchClusterSize = 0;
 		kMeanTime			= 0;    
 
@@ -205,7 +177,6 @@ public class KMeanRecommender
 		//5=PCC, 			  6=VS
 
 		KMeansOrKMeansPlus  = 0;
-
 		timer 				 = new Timer227();
 		MEANORSD			 = new MeanOrSD();
 
@@ -213,10 +184,8 @@ public class KMeanRecommender
 
 		//-------------------------------------------------------
 		//Answers
-//		totalPerfectAnswers = 0;
-//		totalAnswers 	    = 0;
+		
 		numberOfneighbours  = 0;
-//		totalIterations		= 0;
 
 		MAE 				= 0;
 		MAEPerUser			= 0;
@@ -248,8 +217,6 @@ public class KMeanRecommender
 		array_Coverage  	=   new double[3][5];
 		array_ROC 		 	=   new double[3][5];
 		array_BuildTime 	=   new double[3][5];
-		array_GSU  	 	=   new double[3][5];
-		array_GSUSamples 	=   new double[3][5];
 
 		array_Precision 	= new double[8][3][5]; //[topN][fold]
 		array_Recall 	 	= new double[8][3][5];
@@ -265,8 +232,6 @@ public class KMeanRecommender
 		gridResults_Mean_NMAEPerUser	=   new double[3];
 		gridResults_Mean_ROC			=   new double[3];
 		gridResults_Mean_Coverage		=   new double[3];
-		gridResults_Mean_GSU			=   new double[3];
-		gridResults_Mean_GSUSamples	=   new double[3];
 
 		gridResults_Mean_Precision		= new double[8][3]; 
 		gridResults_Mean_Recall		= new double[8][3];
@@ -280,9 +245,6 @@ public class KMeanRecommender
 		gridResults_Sd_RMSEPerUser = new double[3];	         
 		gridResults_Sd_ROC			= new double[3];
 		gridResults_Sd_Coverage	= new double[3];
-		gridResults_sd_GSU			=   new double[3];
-		gridResults_sd_GSUSamples	=   new double[3];
-
 
 		gridResults_Sd_Precision	= new double[8][3];
 		gridResults_Sd_Recall		= new double[8][3];
@@ -336,71 +298,13 @@ public class KMeanRecommender
 	/**
 	 *  It initialise an object and call the method for building the three 
 	 */
-	public void callKTree(MemHelper helper, int callNo, int MAX_ITERATIONS )     
+	public void callKTree(int methodVariant , MemHelper helper, int callNo, int MAX_ITERATIONS )     
 	{
 		
 		timer.start();
-		if (methodVariant==1) {
-				clusteringSeedSelection = new SimpleKMeans(helper);
-		}
-
-		if (methodVariant==2) {
-			 clusteringSeedSelection =new SimpleKMeansPlus(helper);
-		}
-
-		if (methodVariant==3) {
-			 clusteringSeedSelection =new SimpleKMeanModifiedPlus(helper);
-		}
-
-		if (methodVariant==4) { 
-			 clusteringSeedSelection =new SimpleKMeansPlusAndPower(helper);
-		}
-
-		if (methodVariant==9) {
-			clusteringSeedSelection =new SimpleKMeansQuantile(helper);
-		}
-
-		if (methodVariant==10) {	
-			clusteringSeedSelection =new SimpleKMeansNormalDistribution(helper);
-		}
-
-		if (methodVariant==11) {	
-			 clusteringSeedSelection =new SimpleKMeansVariance(helper);
-		}
-
-		if (methodVariant==12) {
-			 clusteringSeedSelection =new SimpleKMeansUniform(helper);
-		}
-
-		if (methodVariant==13) {
-			 clusteringSeedSelection =new SimpleKMeansDensity(helper);
-		}
-
-		if (methodVariant==14) {
-			 clusteringSeedSelection =new SimpleKMeansSamples(helper);
-		}
-
-		if (methodVariant==15) {
-			 clusteringSeedSelection =new SimpleKMeansLog(helper);
-		}
-
-		if (methodVariant==16) {
-			 clusteringSeedSelection =new SimpleKMeansHyperGeometric(helper);
-		}
-
-		if (methodVariant==17) {
-			 clusteringSeedSelection =new SimpleKMeansPoisson(helper);
-		}
-
-		if (methodVariant==18) {
-			clusteringSeedSelection =new SimpleKMeansPlusPlus(helper);
-		}
-
-		if (methodVariant==19) {
-			clusteringSeedSelection =new SimpleKMeansSinglePass(helper);
-		}  
-
-		System.out.println("KMeans version" +clusteringSeedSelection.getName(methodVariant)+" Single Pass centroids took " + timer.getTime() + " s to select");
+		
+		getObject(methodVariant, helper);
+		
 		timer.stop();
 		timer.resetTimer();
 		
@@ -487,42 +391,19 @@ public class KMeanRecommender
 	//We call it for active user and a target movie
 	public double recommend(int activeUser, int targetMovie, int neighbours)    
 	{
-		LongArrayList movies = trainMMh.getMoviesSeenByUser(activeUser); 
-		double currWeight, weightSum = 0, voteSum = 0;
-		int uid; 
-		double  neighRating=0;
-		IntArrayList simpleKUsers =null; 
-		int limit = 50;
 
-		// variable for priors, and sim * priors
-		double priors[] = new double[5];
-		double priorsMultipliedBySim[] = new double[5];
-
-		//Active User's class prior
-		double activeUserPriors[] = new double[5];
-
-		int moviesSize = movies.size();
-
-	
-//		for (int i=0;i<moviesSize;i++)
-//		{                	
-//			int mid = MemHelper.parseUserOrMovie(movies.getQuick(i));
-//			double rating = trainMMh.getRating(activeUser, mid);
-//			int index = (int) rating;
-//			// activeUserPriors[index-1]++;
-//
-//		}
-
+		double weightSum = 0, voteSum = 0;
 		
 		//========================
 		// recommendation 
 		//=========================
-		//------------------------
+		
+				//------------------------
 				//  neighbours priors
 				//------------------------
 				if (KMeansOrKMeansPlus == 5)        	
 				{
-					simpleKUsers = simpleKPlusAndLogPowerTree_NoSimThr.getClusterByUID(activeUser);           		
+//					simpleKUsers = simpleKPlusAndLogPowerTree_NoSimThr.getClusterByUID(activeUser);           		
 					int activeClusterID = simpleKPlusAndLogPowerTree_NoSimThr.getClusterIDByUID(activeUser);
 
 					OpenIntDoubleHashMap simMap = new OpenIntDoubleHashMap();	//sim b/w an active user and the clusters
@@ -554,11 +435,11 @@ public class KMeanRecommender
 					LongArrayList tempUsers = trainMMh.getUsersWhoSawMovie(targetMovie);
 					IntArrayList  allUsers  = new IntArrayList();
 
-					//System.out.println(" all users who saw movies ="+ tempUsers.size());
+					
 					for(int i=0;i<tempUsers.size();i++)
 					{
 						allUsers.add(MemHelper.parseUserOrMovie(tempUsers.getQuick(i)));
-						//System.out.println("Actual Uids="+allUsers.get(i));
+						
 					}       		
 					//-----------------------------------
 					// Find sim * priors
@@ -584,8 +465,7 @@ public class KMeanRecommender
 							//Prediction
 							weightSum += Math.abs(clusterWeight);      		
 							voteSum+= (clusterWeight*(clusterRating-clusterAverage));
-
-							if(total++ == numberOfneighbours) break;
+							if(total++ == neighbours) break;
 						}
 					}
 					if (weightSum!=0)
@@ -610,7 +490,6 @@ public class KMeanRecommender
 
 					double answer = trainMMh.getAverageRatingForUser(activeUser) + voteSum;
 					finalRat =  ((1-alpha)* avgRat + alpha * answer);
-					// System.gc(); // It slows down the system to a great extent
 
 					//------------------------
 					// Send answer back
@@ -623,6 +502,7 @@ public class KMeanRecommender
 
 						// This is just for learning the training parameters
 						// return trainMMh.getAverageRatingForUser(activeUser);
+						
 						return finalRat;
 					}
 
@@ -663,27 +543,30 @@ public class KMeanRecommender
 				}
 
 
-		//-----------------------
-		//KMeans All other variants
-		//-----------------------
+				//-----------------------
+				//KMeans All other variants
+				//-----------------------
 
 
 				else       	
 				{
-					simpleKUsers = callMethod.getClusterByUID(activeUser);            //simpleKPlus 
+//					simpleKUsers = callMethod.getClusterByUID(activeUser);            //simpleKPlus 
 
 					int activeClusterID = callMethod.getClusterIDByUID(activeUser);
 					OpenIntDoubleHashMap simMap = new OpenIntDoubleHashMap();	//sim b/w an active user and the clusters
+					
 
-					// Find sim b/w a user and the cluster he lies in        		
-					double simWithMainCluster = callMethod.findSimWithOtherClusters(activeUser, activeClusterID );
+					// Find sim b/w a user and the cluster he lies in 
+					double simWithMainCluster= CallInitializationMethods.findSimWithOtherClusters(activeUser, activeClusterID);
+				//	double simWithMainCluster = callMethod.findSimWithOtherClusters(activeUser, activeClusterID );
 
 					// Find sim b/w a user and all the other clusters
 					for(int i=0;i<kClusters; i++)
 					{
 						if(i!=activeClusterID)
 						{
-							double activeUserSim  = callMethod.findSimWithOtherClusters(activeUser, i );
+//							double activeUserSim  = findSimWithOtherClusters(activeUser, i );
+							double activeUserSim  = CallInitializationMethods.findSimWithOtherClusters(activeUser, i );
 							simMap.put(i,activeUserSim );      					
 						} 
 
@@ -700,11 +583,10 @@ public class KMeanRecommender
 					LongArrayList tempUsers = trainMMh.getUsersWhoSawMovie(targetMovie);
 					LongArrayList allUsers  = new LongArrayList();
 
-					//System.out.println(" all users who saw movies ="+ tempUsers.size());
 					for(int i=0;i<tempUsers.size();i++)
 					{
 						allUsers.add(MemHelper.parseUserOrMovie(tempUsers.getQuick(i)));
-						//System.out.println("Actual Uids="+allUsers.get(i));
+						
 					}       		
 					//-----------------------------------
 					// Find sim * priors
@@ -720,35 +602,33 @@ public class KMeanRecommender
 
 						//Get currentCluster weight with the active user
 						double clusterWeight =vals.get(i);
+				
 
 						//Get rating, average given by a cluster
 						double clusterRating = callMethod.getRatingForAMovieInACluster(clusterId, targetMovie);
 						double clusterAverage = callMethod.getAverageForAMovieInACluster(clusterId, targetMovie);
-
+				
 						if(clusterRating!=0)
 						{
 							//Prediction
 							weightSum += Math.abs(clusterWeight);      		
 							voteSum+= (clusterWeight*(clusterRating-clusterAverage)) ;
-
-							if(total++ == 70) break;
+							if(total++ == neighbours) break;
 						}
 					}
 					if (weightSum!=0)
-						voteSum *= 1.0 / weightSum;        
+						voteSum *= 1.0 / weightSum;    
 
 
 					if (weightSum==0)				// If no weight, then it is not able to recommend????
 					{ 
-						//   System.out.println(" errror =" + answer);
-						//   System.out.println(" vote sum =" +voteSum + ", weisghtSum ="+ weightSum);
-
+//						  
 						totalNan++;
 						return 0;	       
 					}
 
 					double answer = trainMMh.getAverageRatingForUser(activeUser) + voteSum;             
-					// System.gc(); // It slows down the system to a great extent
+				
 
 					//------------------------
 					// Send answer back
@@ -757,7 +637,7 @@ public class KMeanRecommender
 					if(answer<=0)
 					{
 						totalNegatives++;
-						//return trainMMh.getAverageRatingForUser(activeUser);
+						
 						return 0;
 					}
 
@@ -766,6 +646,7 @@ public class KMeanRecommender
 						return answer;
 					}
 
+					
 				} 	
 				
 //				return 0;
@@ -784,11 +665,13 @@ public class KMeanRecommender
 
 		path = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/FiveFoldData/";
 
+		
 		//create class object
+		
 		KMeanRecommender rec = new KMeanRecommender(); 
-
+		
 		//Compute the results
-		rec.computeResults(path);	    
+		rec.computeResults(path);
 	}
 
 
@@ -822,10 +705,10 @@ public class KMeanRecommender
 
 
 
-		KMeansOrKMeansPlus = 3;	
+		KMeansOrKMeansPlus = 12;	
 		int sThr = 1 ;	
 		simThreshold = sThr/(2* 10.0);	
-		int noNeigh = 30;
+		int noNeigh = 70;
 		numberOfneighbours = noNeigh;
 
 		//Kepping everthing fixed, I have to change this manulally and check how it evolves (starts from 1 to 10), keeping the 
@@ -867,16 +750,75 @@ public class KMeanRecommender
 						simpleKPlusAndLogPowerTree = new SimpleKMeansPlusAndLogPower(trainMMh);
 						simpleKPlusAndLogPowerTree_NoSimThr = new SimpleKMeansPlusAndLogPower(trainMMh);
 					}
+
+					if (v==1) {
+
+							callMethod = new SimpleKMeans(trainMMh);
+
+					}
+
+					if (v==2) {
+						callMethod =new SimpleKMeansPlus(trainMMh);
+					}
+
+					if (v==3) {
+						callMethod =new SimpleKMeanModifiedPlus(trainMMh);
+					}
+
+					if (v==4) { 
+						callMethod =new SimpleKMeansPlusAndPower(trainMMh);
+					}
+
+					if (v==9) {
+						callMethod =new SimpleKMeansQuantile(trainMMh);
+					}
+
+					if (v==10) {	
+						callMethod =new SimpleKMeansNormalDistribution(trainMMh);
+					}
+
+					if (v==11) {	
+						callMethod =new SimpleKMeansVariance(trainMMh);
+					}
+
+					if (v==12) {
+						callMethod =new SimpleKMeansUniform(trainMMh);
+					}
+
+					if (v==13) {
+						callMethod =new SimpleKMeansDensity(trainMMh);
+					}
+
+					if (v==14) {
+						callMethod =new SimpleKMeansSamples(trainMMh);
+					}
+
+					if (v==15) {
+						callMethod =new SimpleKMeansLog(trainMMh);
+					}
+
+					if (v==16) {
+						callMethod =new SimpleKMeansHyperGeometric(trainMMh);
+					}
+
+					if (v==17) {
+						callMethod =new SimpleKMeansPoisson(trainMMh);
+					}
+
+					if (v==18) {
+						callMethod =new SimpleKMeansPlusPlus(trainMMh);
+					}
+
+					if (v==19) {
+						callMethod =new SimpleKMeansSinglePass(trainMMh);
+					}  
+
 				
-					//else           
-						//callMethod = new CallInitializationMethods(trainMMh);   
-					
-						//callMethod = new KMeanRecommender(super.helper);
 						
 
 				}
 
-				//testWithMemHelper(allHelper,10);
+	
 				System.out.println("done reading objects");				   	 
 				System.out.println("=====================");
 				System.out.println(" Fold="+ fold);	 	
@@ -884,10 +826,14 @@ public class KMeanRecommender
 
 
 				//Build clusters
-				callKTree (trainMMh, myFlg , noItr);										//it is converging after 6-7 iterations	
+		
+				callKTree (KMeansOrKMeansPlus, allHelper, myFlg , noItr);//it is converging after 6-7 iterations	
 
-				testWithMemHelper(testMMh,10);	
-				writeResults(KMeansOrKMeansPlus) ;
+				for (int neighbours = numberOfneighbours; neighbours >=10; neighbours -= 20)
+				{
+					testWithMemHelper(testMMh,neighbours);	
+					writeResults(neighbours, KMeansOrKMeansPlus) ;
+				}
 			}//end of number of iterations
 		} //end fold					 
 
@@ -942,27 +888,26 @@ public class KMeanRecommender
 	public void testWithMemHelper(MemHelper testmh, int neighbours)     
 	{
 
-		System.out.println("=*************************====");
-		System.out.println(" in looooop ");	 	
-		System.out.println("==*******************==");
 		RMSECalculator rmse = new  RMSECalculator();
 
 		IntArrayList users;
 		LongArrayList movies;
-		//IntArrayList coldUsers = coldUsersMMh.getListOfUsers();
-		//IntArrayList coldItems = coldItemsMMh.getListOfMovies();
+
 
 		double mov, pred,actual, uAvg;
-		String blank			 			= "";
 		int uid, mid, total				= 0;    		       	
 		int totalUsers					= 0;
 		int totalExtremeErrors 			= 0 ;
 		int totalEquals 					= 0;
 		int totalErrorLessThanPoint5		= 0;
 		int totalErrorLessThan1 			= 0;    	
-		int totalUsersInThisScenario  	= 0;
 		IntArrayList userThereInScenario	= new IntArrayList();
 		int activeClusterID				= 0;
+		
+		System.out.println("Number of Neighbours");				   	 
+		System.out.println("=====================");
+		System.out.println("      "+ neighbours);	 	
+		System.out.println("=====================");
 
 
 		// For each user, make recommendations
@@ -979,7 +924,7 @@ public class KMeanRecommender
 		{
 
 			uid = users.getQuick(i);  
-
+			userThereInScenario.add(uid);
 			movies = testmh.getMoviesSeenByUser(uid);
 
 			for (int j = 0; j < movies.size(); j++)             
@@ -990,6 +935,7 @@ public class KMeanRecommender
 
 				timer.start();
 				double rrr = recommend(uid, mid, neighbours);
+	
 				timer.stop();
 
 
@@ -1089,7 +1035,7 @@ public class KMeanRecommender
 		//-------------------------------------------------
 		//Calculate top-N    		            
 
-		totalUsersInThisScenario = userThereInScenario.size();
+//		totalUsersInThisScenario = userThereInScenario.size();
 
 		for(int i=0;i<8;i++)	//N from 5 to 30
 		{
@@ -1134,6 +1080,7 @@ public class KMeanRecommender
 			//Reset all topN values    		            	
 			rmse.resetTopNForOneUser();
 			rmse.resetFinalTopN();
+			
 
 		} //end of for   		        	
 
@@ -1147,6 +1094,9 @@ public class KMeanRecommender
 		// to check 
 		System.out.println("MAE      = " + MAE );
 		System.out.println("ROC      = " + Roc  );
+		System.out.println("precision     = " + precision[3]  );
+		System.out.println("recall      = " + recall[3]  );
+		System.out.println("F1      = " + F1[3]  );
 		System.out.println("SDInMAE  = " + SDInMAE);
 		System.out.println("SDInROC  = " +  SDInROC );
 		System.out.println("coverage = " + coverage);
@@ -1169,18 +1119,15 @@ public class KMeanRecommender
 
 		try {
 
-
-			//// changed
-			writeData1 = new BufferedWriter(new FileWriter(myPath + "new.csv", true));   			
-			writeData2 = new BufferedWriter(new FileWriter(myPath + "new2.csv", true));	
-			writeData3 = new BufferedWriter(new FileWriter(myPath + "Results.csv", true));   
-			System.out.println("Rec File Created at"+ "new");
+			writeData = new BufferedWriter(new FileWriter(myPath + "Results.csv", true));   
+			System.out.println("Result File Created at  ::: "+ myPath + "Results");
+//			System.out.println("Rec File Created at"+ "new");
 
 		}
 
 		catch (Exception E)
 		{
-			System.out.println("error opening the file pointer of rec");
+			System.out.println("error opening the file pointer of Result file");
 			System.exit(1);
 		}
 
@@ -1190,37 +1137,53 @@ public class KMeanRecommender
 	//__________________________________
 
 
-	public void writeResults(int k)    
+	public void writeResults(int neighbours, int name)    
 	{
 
 		try {
 	
-			variant = clusteringSeedSelection.getName(k);
+			variant = clusteringSeedSelection.getName(name);
 
 
 			//***********
 
-			System.out.println("Result File Created at  ::: "+ myPath + "Results");
-			writeData3.append("\n");
-			writeData3.append("Variant");
-			writeData3.append(",");
-			writeData3.append("Coverage");
-			writeData3.append(",");
-			writeData3.append("MAE");
-			writeData3.append(",");
-			writeData3.append("ROC");
-			writeData3.append(",");	
-			writeData3.append("\n");
+		///	System.out.println("Result File Created at  ::: "+ myPath + "Results");
+			writeData.append("\n");
+			writeData.append("Variant");
+			writeData.append(",");
+			writeData.append("Number of Neibours");
+			writeData.append(",");
+			writeData.append("Coverage");
+			writeData.append(",");
+			writeData.append("MAE");
+			writeData.append(",");
+			writeData.append("ROC");
+			writeData.append(",");
+			writeData.append("Precision");
+			writeData.append(",");
+			writeData.append("Recall");
+			writeData.append(",");
+			writeData.append("F1");
+			writeData.append(",");
+			writeData.append("\n");
 
-			writeData3.append(""+ variant);
-			writeData3.append(",");
-			writeData3.append(""+coverage);
-			writeData3.append(",");
-			writeData3.append(""+MAE);
-			writeData3.append(",");
-			writeData3.append(""+Roc);
-			writeData3.append(",");	
-			writeData3.append("\n");
+			writeData.append(""+ variant);
+			writeData.append(",");
+			writeData.append(""+neighbours);
+			writeData.append(",");
+			writeData.append(""+coverage);
+			writeData.append(",");
+			writeData.append(""+MAE);
+			writeData.append(",");
+			writeData.append(""+Roc);
+			writeData.append(",");	
+			writeData.append(""+precision[3]);
+			writeData.append(",");
+			writeData.append("" +recall[3]);
+			writeData.append(",");
+			writeData.append("" +F1[3]);
+			writeData.append(",");
+			writeData.append("\n");
 
 
 		}
@@ -1238,9 +1201,8 @@ public class KMeanRecommender
 	{
 
 		try {
-			writeData1.close();
-			writeData2.close();
-			writeData3.close();
+
+			writeData.close();
 			System.out.println("Files closed");
 		}
 
@@ -1252,53 +1214,72 @@ public class KMeanRecommender
 
 	}
 
-	/*******************************************************
-	 * naming variants
-	 */
-//	@Override
-//	public String getName(int k)
-//	
-//	
-//	{
-//		String variant= null;
-//		if(k==1) 	         
-//			variant = "SimpleKMeans";	
-//		if(k==2)
-//			variant = "SimpleKMeansPlus";
-//			        
-//		if(k==3)
-//			variant = "SimpleKMeanModifiedPlus";
-//		
-//		if(k==4)
-//			variant = "SimpleKMeansPlusAndPower";
-//		  
-//		if(k==5)   				
-//			variant = "SimpleKMeansPlusAndLogPower";
-//	
-//		if(k==9) 
-//			variant = "SimpleKMeansQuantile";
-//		if(k==10)
-//			variant = "SimpleKMeansNormalDistribution";
-//		if(k==11)  
-//			variant = "SimpleKMeansVariance";	
-//		if(k==12) 
-//			variant = "SimpleKMeansUniform";
-//		if(k==13) 
-//			variant = "SimpleKMeansDensity";
-//		if(k==14)  
-//			variant = "SimpleKMeansSamples";
-//		if(k==15)  
-//			variant = "SimpleKMeansLog";
-//		if(k==16)  
-//			variant = "SimpleKMeansHyperGeometric";
-//		if(k==17) 
-//			variant = "SimpleKMeansPoisson";
-//		if(k==18) 
-//			variant = "SimpleKMeansPlusPlus";
-//		if(k==19) 
-//			variant = "SimpleKMeansSinglePass";
-//		return variant;
-//		
-//	}
+	public  KMeansVariant getObject(int variant, MemHelper helper)
+	{
+
+		if (variant==1) {
+	
+				clusteringSeedSelection = new SimpleKMeans(helper);
+		}
+	
+		else if (variant==2) {
+			 clusteringSeedSelection =new SimpleKMeansPlus(helper);
+		}
+	
+		else if (variant==3) {
+			 clusteringSeedSelection =new SimpleKMeanModifiedPlus(helper);
+		}
+	
+		else if (variant==4) { 
+			 clusteringSeedSelection =new SimpleKMeansPlusAndPower(helper);
+		}
+	
+		else if (variant==9) {
+			clusteringSeedSelection =new SimpleKMeansQuantile(helper);
+		}
+	
+		else if (variant==10) {	
+			clusteringSeedSelection =new SimpleKMeansNormalDistribution(helper);
+		}
+	
+		else if (variant==11) {	
+			 clusteringSeedSelection =new SimpleKMeansVariance(helper);
+		}
+	
+		else if (variant==12) {
+			 clusteringSeedSelection =new SimpleKMeansUniform(helper);
+		}
+	
+		else if (variant==13) {
+			 clusteringSeedSelection =new SimpleKMeansDensity(helper);
+		}
+	
+		else if (variant==14) {
+			 clusteringSeedSelection =new SimpleKMeansSamples(helper);
+		}
+	
+		else if (variant==15) {
+			 clusteringSeedSelection =new SimpleKMeansLog(helper);
+		}
+	
+		else if (variant==16) {
+			 clusteringSeedSelection =new SimpleKMeansHyperGeometric(helper);
+		}
+	
+		else if (variant==17) {
+			 clusteringSeedSelection =new SimpleKMeansPoisson(helper);
+		}
+	
+		else if (variant==18) {
+			clusteringSeedSelection =new SimpleKMeansPlusPlus(helper);
+		}
+	
+		else if (variant==19) {
+			clusteringSeedSelection =new SimpleKMeansSinglePass(helper);
+		}
+		return clusteringSeedSelection;  
+	
+	}
+
 
 }//end class

@@ -16,7 +16,7 @@ import cern.jet.random.HyperGeometric;
 // k =1, 0.9523 (simple CF)
 
 /************************************************************************************************/
-public class SimpleKMeansHyperGeometric  implements KMeansVariant
+public class SimpleKMeansHyperGeometric  extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/
 
 {
@@ -107,10 +107,8 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 @Override
 public String getName(int variant) {
 
-String name = null;
-KMeansVariant var = new KMeanRecommender();
-name= var.getName(variant);
-return name;
+
+return "SimpleKMeansHyperGeometric";
 }
     
        

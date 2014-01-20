@@ -14,7 +14,7 @@ import cern.jet.random.engine.RandomEngine;
 
 
 /************************************************************************************************/
-public class SimpleKMeansPoisson  implements KMeansVariant
+public class SimpleKMeansPoisson extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/
 
 {
@@ -119,10 +119,8 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 @Override
 public String getName(int variant) {
 
-String name = null;
-KMeansVariant var = new KMeanRecommender();
-name= var.getName(variant);
-return name;
+
+return "SimpleKMeansPoisson";
 }
     
 /*******************************************************************************************************/

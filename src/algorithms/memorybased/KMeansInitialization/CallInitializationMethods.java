@@ -17,10 +17,11 @@ public abstract class CallInitializationMethods implements KMeansVariant
 
 {
 	
+	public KMeansVariant clusteringSeedSelection = null;
 	// initialize class here 
 	public KMeanRecommender 						kRec;
 	public SimpleKMeans		    			simpleKTree;
-	public MemHelper 	helper;
+	static MemHelper 	helper;
 
 	private int       			howManyClusters   	= 8;
 	private	int 				callNo;					 //call how many times this file been called
@@ -31,12 +32,12 @@ public abstract class CallInitializationMethods implements KMeansVariant
 	private ArrayList<IntArrayList> 	finalClusters;
 	private OpenIntIntHashMap 			uidToCluster;
 
-	ArrayList<Centroid> centroids;
+	 static ArrayList<Centroid> centroids;
 	ArrayList<Centroid> returnedCentroids;
 	public ArrayList<Centroid> newCentroids;
 	OpenIntIntHashMap   clusterMap;
 	boolean 			converged;					  //Algorithm converged or not
-	int 				simVersion;
+	 static int 				simVersion;
 	    
 /************************************************************************************************/
 
@@ -44,6 +45,8 @@ public abstract class CallInitializationMethods implements KMeansVariant
 	{
 
 		helper =KMeanRecommender.trainMMh;
+
+	
 		kRec = new KMeanRecommender();
 		finalClusters = new ArrayList<IntArrayList>(); //Creates ArrayList with initial default capacity 10.
 		uidToCluster  = new OpenIntIntHashMap();       // <E> is for an element in the arraylist
@@ -55,25 +58,14 @@ public abstract class CallInitializationMethods implements KMeansVariant
 		timer  	  = new Timer227();
 
 	}
-	    
-	   public CallInitializationMethods(MemHelper helper)    
-	    {
-	        this.helper   = helper;
-	        finalClusters = new ArrayList<IntArrayList>(); //Creates ArrayList with initial default capacity 10.
-	        uidToCluster  = new OpenIntIntHashMap();       // <E> is for an element in the arraylist
-	        clusterMap 	  = new OpenIntIntHashMap();
-	        
-	        myCount   = 0;
-	        callNo	  = 0;
-	        converged = false;
-	        timer  	  = new Timer227();
-	    }
+
 
 	 /************************************************************************************************/ 
 	 //This is called after the constructor call 
 
 	public void cluster(int variant , int kClusters,  int call, int iterations, int sVersion)    
 	{
+		
 		methodVariant = variant;
 		howManyClusters = kClusters;  
 		callNo			= call;
@@ -143,7 +135,7 @@ public abstract class CallInitializationMethods implements KMeansVariant
 	 * */
 
 	public int getClusterSizeByID(int id)    
-	{
+	{	
 		return finalClusters.size();
 	}
 
@@ -156,7 +148,7 @@ public abstract class CallInitializationMethods implements KMeansVariant
 	 */
 
 	public IntArrayList getClusterByUID(int uid)    
-	{
+	{	
 		return finalClusters.get(uidToCluster.get(uid));	//it return the cluster
 	}
 
@@ -204,7 +196,13 @@ public abstract class CallInitializationMethods implements KMeansVariant
 			//------------------------------------
 			// overrides KMeansVariant(interface)
 			//------------------------------------
-			chooseCentroids( variant , dataset, k , cliqueAverage);
+			
+//		just calling chooseCentroid neglects the value of variant and every time calls the same class 	
+			
+//			returnedCentroids= chooseCentroids( variant , dataset, k , cliqueAverage);
+
+			clusteringSeedSelection = kRec.getObject(variant, helper);
+			returnedCentroids= clusteringSeedSelection.chooseCentroids( variant , dataset, k , cliqueAverage);
 			centroids =returnedCentroids;	    
 		}
 		
@@ -436,11 +434,11 @@ public abstract class CallInitializationMethods implements KMeansVariant
 	 * @return Sim between user and centroid
 	 */
 
-	public double findSimWithOtherClusters(int uid, int i)
+	public static double findSimWithOtherClusters(int uid, int i)
 	{
 
-		double distance =0.0;   
-
+		double distance =0.0; 
+		
 		if(simVersion==1)
 			distance = centroids.get(i).distanceWithDefault(uid, helper.getGlobalAverage(), helper);
 		else if(simVersion==2)
@@ -480,27 +478,176 @@ public abstract class CallInitializationMethods implements KMeansVariant
 		return distance;	 
 
 	}
+	
 
-	/*******************************************************************************************************/
- 
+	  
+    /*******************************************************************************************************/
     /**
-     * Chooses k users to serve as intial centroids for 
-     * the kMeansPlus algorithm.
-     * Each time, we have to choose the centorid which is at the farthest distant from the current one 
-     *
-     * @param  dataset  The list uids. 
-     * @param  k  The number of centroids (clusters) desired. 
-     * @return A List of randomly chosen centroids. 
-     */
-	
-//	public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset, int k, double cliqueAverage)
-//	{
-//
-//		return null;
-//
-//	}
-	
-//	
+     * Find the sim between a centroid and a point, we can use VS and PCC for it
+     * @param int center, int point  
+     * @return double similarity
+     */ 
+
+    public double  findSimPCCBetweenACentroidAndUser (int center, int point)
+    {
+
+    	int amplifyingFactor = 50;			//give more weight if users have more than 50 movies in common	 
+    	double functionResult = 0.0;
+
+    	double topSum, bottomSumActive, bottomSumTarget, rating1, rating2;
+    	topSum = bottomSumActive = bottomSumTarget = 0;
+
+    	double activeAvg = helper.getAverageRatingForUser(center);
+    	double targetAvg = helper.getAverageRatingForUser(point);
+
+    	ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating(center,point, true);
+
+    	// If user have no ratings in common, send -2 back
+    	if(ratings.size() ==0)
+    		return 0;
+
+    	for (Pair pair : ratings)         
+    	{
+    		rating1 = (double) MemHelper.parseRating(pair.a) - activeAvg;
+    		rating2 = (double) MemHelper.parseRating(pair.b) - targetAvg;
+
+    		topSum += rating1 * rating2;
+
+    		bottomSumActive += Math.pow(rating1, 2);
+    		bottomSumTarget += Math.pow(rating2, 2);
+    	}
+
+    	double n = ratings.size() - 1;     
+    	if(n == 0)
+    		n++;     
+
+    	if (bottomSumActive != 0 && bottomSumTarget != 0)
+    	{    	
+    		functionResult = (1 * topSum) / Math.sqrt(bottomSumActive * bottomSumTarget);  //why multiply by n?   	
+    				// return  functionResult; //simple send    	
+    				return  functionResult * (n/amplifyingFactor); //amplified send    	
+    	}
+
+    	else     
+    		return 0;			 
+
+
+    }
+  //----------------------------------------------------------------
+    
+    public double  findSimVSBetweenACentroidAndUser (int center, int point)
+    {
+   	    
+   	 int amplifyingFactor = 50;			//give more weight if users have more than 50 movies in common	 
+   	 double functionResult = 0.0;
+   	 
+   	 double topSum, bottomSumActive, bottomSumTarget, rating1, rating2;
+        topSum = bottomSumActive = bottomSumTarget = 0;
+        
+//        double activeAvg = helper.getAverageRatingForUser(center);
+//        double targetAvg = helper.getAverageRatingForUser(point);
+        
+        ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating(center,point, true);
+        
+        // If user have no ratings in common, send -2 back
+          if(ratings.size() ==0)
+        	return 0;
+        
+        for (Pair pair : ratings)         
+        {
+            rating1 = (double) MemHelper.parseRating(pair.a) ;
+            rating2 = (double) MemHelper.parseRating(pair.b) ;
+            
+            topSum += rating1 * rating2;
+        
+            bottomSumActive += Math.pow(rating1, 2);
+            bottomSumTarget += Math.pow(rating2, 2);
+        }
+        
+        double n = ratings.size() - 1;     
+        if(n == 0)
+            n++;     
+       
+       if (bottomSumActive != 0 && bottomSumTarget != 0)
+       {    	
+       	functionResult = (1 * topSum) / Math.sqrt(bottomSumActive * bottomSumTarget);  //why multiply by n?   	
+       	// return  functionResult; //simple send    	
+       	 return  functionResult * (n/amplifyingFactor); //amplified send    	
+       }
+       
+       else     
+       	return 0;			 
+       
+   	 
+    }
+    
+    //------------------------------------------------------
+    
+/*******************************************************************************************************/
+
+   /**
+    * Find the sim between a centroid and a point, we can use VS and PCC for it (This is VS) [0,1]
+    * @param int center, int point  
+    * @return double similarity
+    */ 
+    
+ public double findSimBetweenACentroidAndUser (int center, int point)
+ {
+	    
+	 int amplifyingFactor = 50;			//give more weight if users have more than 50 movies in common	 
+	 double functionResult = 0.0;
+	 
+	 double topSum, bottomSumActive, bottomSumTarget, rating1, rating2;
+     topSum = bottomSumActive = bottomSumTarget = 0;
+     
+//     double activeAvg = helper.getAverageRatingForUser(center);
+//     double targetAvg = helper.getAverageRatingForUser(point);
+     
+     ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating(center,point, true);
+     
+     // If user have no ratings in common, send -2 back
+       if(ratings.size() ==0)
+     	return 0;
+     
+     for (Pair pair : ratings)         
+     {
+         rating1 = (double) MemHelper.parseRating(pair.a) ;
+         rating2 = (double) MemHelper.parseRating(pair.b) ;
+         
+         topSum += rating1 * rating2;
+     
+         bottomSumActive += Math.pow(rating1, 2);
+         bottomSumTarget += Math.pow(rating2, 2);
+     }
+     
+     double n = ratings.size() - 1;     
+     if(n == 0)
+         n++;     
+     
+     bottomSumActive =Math.sqrt(bottomSumActive);
+     bottomSumTarget =Math.sqrt(bottomSumTarget);
+    
+    if (bottomSumActive != 0 && bottomSumTarget != 0)
+    {    	
+    	functionResult = (1 * topSum) / (bottomSumActive * bottomSumTarget);  //why multiply by n?   	  	
+    	return  functionResult * (n/amplifyingFactor); //amplified send    	
+    }
+    
+    else     
+    	return 0;			 
+    
+	 
+ }
+
+    /***********************************************************************************************************/
+
+	public ArrayList<Centroid> chooseCentroids(int variant,
+			IntArrayList dataset, int k, double cliqueAverage) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
 }
 

@@ -14,7 +14,7 @@ import cern.colt.map.*;
 // k =1, 0.9523 (simple CF)
 
 /************************************************************************************************/
-public class SimpleKMeansPlusAndPower implements KMeansVariant
+public class SimpleKMeansPlusAndPower extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/
 
 {
@@ -196,35 +196,7 @@ public class SimpleKMeansPlusAndPower implements KMeansVariant
 	    }
 
 
-/*******************************************************************************************************/
-    
-    /**
-     * Find the sim b/w a user and other clusters (other than the one in which a user lies)
-     * @param uid
-     * @return Sim between user and centroid
-     */
-    
-    public double findSimWithOtherClusters(int uid, int i)
-    {
-   	 
-   	 double distance =0.0;   
-          
-  	 if(simVersion==1)
-   		 distance = centroids.get(i).distanceWithDefault(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==2)
-   		distance = centroids.get(i).distanceWithoutDefault(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==3)
-   		 distance = centroids.get(i).distanceWithDefaultVS(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==4)
-   		 distance = centroids.get(i).distanceWithoutDefaultVS(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==5)
-   			 distance = centroids.get(i).distanceWithPCC(uid, i, helper);   	 
-   	else if(simVersion==6)
-			 distance = centroids.get(i).distanceWithVS(uid, i, helper);
-   	  	 
-   	 return distance;	 
-   	 
-    }
+
 		//----------------
 		//  get variant name
 		// ---------------
@@ -232,8 +204,8 @@ public class SimpleKMeansPlusAndPower implements KMeansVariant
 @Override
 public String getName(int variant) {
 	
-	String name = null;
-	return name;
+
+	return "SimpleKMeansPlusAndPower";
 }
 
  /*******************************************************************************************************/

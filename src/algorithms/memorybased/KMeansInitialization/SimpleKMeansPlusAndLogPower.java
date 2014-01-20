@@ -213,7 +213,9 @@ public class SimpleKMeansPlusAndLogPower
 	        if(callNo==1)
 	        {     
 	        	timer.start();	              
-	        	this.centroids = choosePlusLogPowerCentroids(dataset, orgClusterSize);   
+	        	// this.centroids = choosePlusLogPowerCentroids(dataset, orgClusterSize);   
+	        	
+	        	this.centroids = choosePlusLogPowerCentroids(dataset, orgClusterSize);
 //	        	this.centroids = chooseLogCentroids_old(dataset, orgClusterSize);
 	        	
 		        timer.stop();   
@@ -221,7 +223,7 @@ public class SimpleKMeansPlusAndLogPower
 		        timer.resetTimer();
 		           
 	        }
-	        
+	        newCentroids = new ArrayList<Centroid>();
 	          Centroid newCentroid;  
 	        //Perform the clustering until the clusters converge or until
 	        //we reach the maximum number of iterations.    

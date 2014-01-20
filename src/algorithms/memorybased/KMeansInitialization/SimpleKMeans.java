@@ -14,7 +14,7 @@ import cern.colt.list.*;
 // k =1, 0.9523 (simple CF)
 
 /************************************************************************************************/
-public class SimpleKMeans implements KMeansVariant
+public class SimpleKMeans extends CallInitializationMethods implements KMeansVariant 
 /************************************************************************************************/
 
 {
@@ -105,10 +105,8 @@ public class SimpleKMeans implements KMeansVariant
 @Override
 public String getName(int variant) {
 	
-	String name = null;
-	KMeansVariant var = new KMeanRecommender();
-	name= var.getName(variant);
-	return name;
+
+	return "SimpleKMeans";
 }
       
  /*******************************************************************************************************/

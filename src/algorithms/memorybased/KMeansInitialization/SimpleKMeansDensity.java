@@ -202,37 +202,6 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 
 }
 
-
-  /*******************************************************************************************************/
-    
-    /**
-     * Find the sim b/w a user and other clusters (other than the one in which a user lies)
-     * @param uid
-     * @return Sim between user and centroid
-     */
-    
-    public double findSimWithOtherClusters(int uid, int i)
-    {
-   	 
-   	 double distance =0.0;   
-          
-  	 if(simVersion==1)
-   		 distance = centroids.get(i).distanceWithDefault(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==2)
-   		distance = centroids.get(i).distanceWithoutDefault(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==3)
-   		 distance = centroids.get(i).distanceWithDefaultVS(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==4)
-   		 distance = centroids.get(i).distanceWithoutDefaultVS(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==5)
-   			 distance = centroids.get(i).distanceWithPCC(uid, i, helper);   	 
-   	else if(simVersion==6)
-			 distance = centroids.get(i).distanceWithVS(uid, i, helper);
-   	  	 
-   	 return distance;	 
-   	 
-    }
-
 		//----------------
 		//  get variant name
 		// ---------------
@@ -240,7 +209,7 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 @Override
 public String getName(int variant) {
 	
-	String name = "Write my name here pls";
+	String name = "SimpleKMeansDensity";
 	return name;
 }
      

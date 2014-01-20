@@ -5,14 +5,13 @@ import java.util.*;
 import algorithms.memorybased.KMeansInitialization.Centroid;
 
 import netflix.memreader.*;
-import netflix.utilities.*;
 import cern.colt.list.*;
 import cern.colt.map.*;
 
 
 
 /************************************************************************************************/
-public class SimpleKMeansSamples  implements KMeansVariant
+public class SimpleKMeansSamples extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/
 
 {
@@ -137,60 +136,7 @@ public class SimpleKMeansSamples  implements KMeansVariant
 
 		}
 	   
-	   
-/*******************************************************************************************************/
 
-    /**
-     * Find the sim between a centroid and a point, we can use VS and PCC for it
-     * @param int center, int point  
-     * @return double similarity
-     */ 
-
-    public double  findSimPCCBetweenACentroidAndUser (int center, int point)
-    {
-
-    	int amplifyingFactor = 50;			//give more weight if users have more than 50 movies in common	 
-    	double functionResult = 0.0;
-
-    	double topSum, bottomSumActive, bottomSumTarget, rating1, rating2;
-    	topSum = bottomSumActive = bottomSumTarget = 0;
-
-    	double activeAvg = helper.getAverageRatingForUser(center);
-    	double targetAvg = helper.getAverageRatingForUser(point);
-
-    	ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating(center,point, true);
-
-    	// If user have no ratings in common, send -2 back
-    	if(ratings.size() ==0)
-    		return 0;
-
-    	for (Pair pair : ratings)         
-    	{
-    		rating1 = (double) MemHelper.parseRating(pair.a) - activeAvg;
-    		rating2 = (double) MemHelper.parseRating(pair.b) - targetAvg;
-
-    		topSum += rating1 * rating2;
-
-    		bottomSumActive += Math.pow(rating1, 2);
-    		bottomSumTarget += Math.pow(rating2, 2);
-    	}
-
-    	double n = ratings.size() - 1;     
-    	if(n == 0)
-    		n++;     
-
-    	if (bottomSumActive != 0 && bottomSumTarget != 0)
-    	{    	
-    		functionResult = (1 * topSum) / Math.sqrt(bottomSumActive * bottomSumTarget);  //why multiply by n?   	
-    				// return  functionResult; //simple send    	
-    				return  functionResult * (n/amplifyingFactor); //amplified send    	
-    	}
-
-    	else     
-    		return 0;			 
-
-
-    }
 		//----------------
 		//  get variant name
 		// ---------------
@@ -198,10 +144,8 @@ public class SimpleKMeansSamples  implements KMeansVariant
 @Override
 public String getName(int variant) {
 	
-	String name = null;
-	KMeansVariant var = new KMeanRecommender();
-	name= var.getName(variant);
-	return name;
+
+	return "SimpleKMeansSamples";
 }
 
 

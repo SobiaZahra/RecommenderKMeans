@@ -14,7 +14,7 @@ import cern.jet.random.engine.RandomEngine;
 
 
 /************************************************************************************************/
-public class SimpleKMeansNormalDistribution  implements KMeansVariant
+public class SimpleKMeansNormalDistribution  extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/
 
 {
@@ -109,58 +109,7 @@ public class SimpleKMeansNormalDistribution  implements KMeansVariant
 
 		}
 	    
-/*******************************************************************************************************/
-    
-    /**
-     * Find the sim b/w a user and other clusters (other than the one in which a user lies)
-     * @param uid
-     * @return Sim between user and centroid
-     */
-    
-    public double findSimWithOtherClusters(int uid, int i)
-    {
-   	 
-   	 double distance =0.0;   
-          
-  	 if(simVersion==1)
-   		 distance = centroids.get(i).distanceWithDefault(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==2)
-   		distance = centroids.get(i).distanceWithoutDefault(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==3)
-   		 distance = centroids.get(i).distanceWithDefaultVS(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==4)
-   		 distance = centroids.get(i).distanceWithoutDefaultVS(uid, helper.getGlobalAverage(), helper);
-   	 else if(simVersion==5)
-   			 distance = centroids.get(i).distanceWithPCC(uid, i, helper);   	 
-   	else if(simVersion==6)
-			 distance = centroids.get(i).distanceWithVS(uid, i, helper);
-   	  	 
-   	 return distance;	 
-   	 
-    }
 
-    //---------------------
-    public double findSimWithOtherClusters(int uid, int i, int version)
-    {
-   	 
-   	 double distance =0.0;   
-
-   	 if(version==1)
-   		 distance = centroids.get(i).distanceWithDefault(uid, helper.getGlobalAverage(), helper);
-   	 else if(version==2)
-   		distance = centroids.get(i).distanceWithoutDefault(uid, helper.getGlobalAverage(), helper);
-   	 else if(version==3)
-   		 distance = centroids.get(i).distanceWithDefaultVS(uid, helper.getGlobalAverage(), helper);
-   	 else if(version==4)
-   		 distance = centroids.get(i).distanceWithoutDefaultVS(uid, helper.getGlobalAverage(), helper);
-   	 else if(version==5)
-   			 distance = centroids.get(i).distanceWithPCC(uid, i, helper);   	 
-   	else if(version==6)
-			 distance = centroids.get(i).distanceWithVS(uid, i, helper);
-	 
-   	 return distance;	 
-   	 
-    }
 
 		//----------------
 		//  get variant name
@@ -169,10 +118,8 @@ public class SimpleKMeansNormalDistribution  implements KMeansVariant
 @Override
 public String getName(int variant) {
 	
-	String name = null;
-	KMeansVariant var = new KMeanRecommender();
-	name= var.getName(variant);
-	return name;
+
+	return "SimpleKMeansNormalDistribution";
 }
  /*******************************************************************************************************/
  

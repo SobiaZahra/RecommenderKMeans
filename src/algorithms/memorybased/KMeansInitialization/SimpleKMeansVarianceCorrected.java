@@ -26,10 +26,8 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	     * Builds the RecTree and saves the resulting clusters.
 	     */
 	    
-	    public SimpleKMeansVarianceCorrected(MemHelper helper)    
-	    {
+	    public SimpleKMeansVarianceCorrected(MemHelper helper) {
 	        this.helper   = helper;
-
 	    }
 
 
@@ -81,14 +79,19 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 
 	    		}
 	    		
+	    		//Sort them ... "varying distance from overall mean"
 	    		IntArrayList myUsers 	 	= uidToCentroidSim.keys();
-	    		DoubleArrayList myWeights    =uidToCentroidSim.values();      		   
+	    		DoubleArrayList myWeights   = uidToCentroidSim.values();      		   
 	    		uidToCentroidSim.pairsSortedByValue(myUsers, myWeights);
 
 	    		int totalPossibleC = uidToCentroidSim.size();
 	    		int number	=		0;
 	    		int m;
 
+	    		// Look at this formula, I dont know what It means,
+	    		// But you need to confirm it from the paper
+	    		// sL = x(1+( L-1) *M/K). 
+	    	
 	    		for (int j=1;j<totalPossibleC; j++ )
 	    		{
 
@@ -97,7 +100,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	    			C= myUsers.get(number);
 
 
-	    			if(allCentroids.contains(C)==false)
+	    			if(allCentroids.contains(C) == false)
 	    			{	 
 	    				allCentroids.add(C);        				  			
 	    				break;        					  	

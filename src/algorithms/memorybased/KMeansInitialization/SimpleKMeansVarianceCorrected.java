@@ -94,7 +94,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	    			number = 1+ m/k;
 	    			seed= myUsers.get(number);
 	    			
-	    			if(allCentroids.contains(seed) == false) {	 
+	    			if(!allCentroids.contains(seed)) {	 
 	    				allCentroids.add(seed);
 	    				chosenCentroids.add( new Centroid (seed,helper));        					  	
 	    			}

@@ -34,7 +34,7 @@ public class KMeanRecommender
 	private String 							variant;
 
 	 //Objects of some classes
-	static MemHelper 			trainMMh;
+	static MemHelper 	trainMMh;
 	MemHelper 			allHelper;
 	MemHelper 			testMMh;
 	MeanOrSD			MEANORSD;
@@ -389,7 +389,7 @@ public class KMeanRecommender
 	 */
 
 	//We call it for active user and a target movie
-	public double recommend(int activeUser, int targetMovie, int neighbours)    
+	public double recommend(int activeUser, int targetMovie, int totalNeighbours)    
 	{
 
 		double weightSum = 0, voteSum = 0;
@@ -465,7 +465,7 @@ public class KMeanRecommender
 							//Prediction
 							weightSum += Math.abs(clusterWeight);      		
 							voteSum+= (clusterWeight*(clusterRating-clusterAverage));
-							if(total++ == neighbours) break;
+							if(total++ == totalNeighbours) break;
 						}
 					}
 					if (weightSum!=0)
@@ -580,21 +580,8 @@ public class KMeanRecommender
 					DoubleArrayList vals = simMap.values();        		
 					simMap.pairsSortedByValue(keys, vals);        		
 					int simSize = simMap.size();
-					LongArrayList tempUsers = trainMMh.getUsersWhoSawMovie(targetMovie);
-					LongArrayList allUsers  = new LongArrayList();
-
-					for(int i=0;i<tempUsers.size();i++)
-					{
-						allUsers.add(MemHelper.parseUserOrMovie(tempUsers.getQuick(i)));
-						
-					}       		
-					//-----------------------------------
-					// Find sim * priors
-					//-----------------------------------
-					// How much similar clusters to take into account? 
-					// Let us take upto a certain sim into account, e.g. (>0.10) sim
-
 					int total = 0 ;
+					
 					for (int i=simSize-1;i>=0;i--)
 					{
 						//Get a cluster id
@@ -603,7 +590,6 @@ public class KMeanRecommender
 						//Get currentCluster weight with the active user
 						double clusterWeight =vals.get(i);
 				
-
 						//Get rating, average given by a cluster
 						double clusterRating = callMethod.getRatingForAMovieInACluster(clusterId, targetMovie);
 						double clusterAverage = callMethod.getAverageForAMovieInACluster(clusterId, targetMovie);
@@ -613,7 +599,7 @@ public class KMeanRecommender
 							//Prediction
 							weightSum += Math.abs(clusterWeight);      		
 							voteSum+= (clusterWeight*(clusterRating-clusterAverage)) ;
-							if(total++ == neighbours) break;
+							if(total++ == totalNeighbours) break;
 						}
 					}
 					if (weightSum!=0)
@@ -621,23 +607,14 @@ public class KMeanRecommender
 
 
 					if (weightSum==0)				// If no weight, then it is not able to recommend????
-					{ 
-//						  
+					{   
 						totalNan++;
 						return 0;	       
 					}
 
 					double answer = trainMMh.getAverageRatingForUser(activeUser) + voteSum;             
-				
-
-					//------------------------
-					// Send answer back
-					//------------------------          
-
-					if(answer<=0)
-					{
-						totalNegatives++;
-						
+					if(answer<=0) {
+						totalNegatives++;	
 						return 0;
 					}
 
@@ -645,12 +622,7 @@ public class KMeanRecommender
 //						totalRecSamples++;   
 						return answer;
 					}
-
-					
 				} 	
-				
-//				return 0;
-
 			}
 
 
@@ -660,14 +632,7 @@ public class KMeanRecommender
 	public static void main(String[] args)    
 	{
 
-		String path ="";
-		int    fold = 1;
-
-		path = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/FiveFoldData/";
-
-		
-		//create class object
-		
+		String path = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/FiveFoldData/";
 		KMeanRecommender rec = new KMeanRecommender(); 
 		
 		//Compute the results
@@ -690,35 +655,39 @@ public class KMeanRecommender
 
 		//		myTotalFolds = 5; 
 		myTotalFolds = 1; 
-		int START    = 0; 			 // 0=gsu, 1=remaining users, 3=all users
-		int pThr = 30;		
-		int k=90;
+		int pThr = 30;
+		
+		final int startK = 10;
+		final int endK = 100;
+		final int incK  =10;
+		
 		powerUsersThreshold = pThr;
-
-		kClusters  = k;
 		simVersion = 1;
 		openFile();
-
-		System.out.println("==========================================================================");
-		System.out.println(" Clusters = "+ k);
-		System.out.println("==========================================================================");
-
-
 
 		KMeansOrKMeansPlus = 12;	
 		int sThr = 1 ;	
 		simThreshold = sThr/(2* 10.0);	
 		int noNeigh = 70;
 		numberOfneighbours = noNeigh;
+		final int MAX_ITERATIONS = 10;
+		
 
-		//Kepping everthing fixed, I have to change this manulally and check how it evolves (starts from 1 to 10), keeping the 
+		//Keeping everthing fixed, I have to change this manulally and check how it evolves (starts from 1 to 10), keeping the 
 		//other parameters fixed (to the optimal ones)
-		for(int noItr=2;noItr<=2;noItr++)
-		{
-
-
-			for(int fold=1 ;fold<=myTotalFolds;fold++)
-			{ 	
+		// No of clusters, need to learn keeoing everything fixed
+		for(int k = startK; k < endK; k+=incK) {
+			
+			System.out.println("==========================================================================");
+			System.out.println(" Clusters = "+ k);
+			System.out.println("==========================================================================");
+			kClusters  = k;
+			
+			// number of iterations, need to learn keeping everything fixed
+			for(int noItr=2;noItr<=MAX_ITERATIONS;noItr++) {
+				
+				// number of fold (keep this only fold1 at the moment)
+				for(int fold=1 ;fold<=myTotalFolds;fold++) { 	
 				currentFold = fold;
 				if(sThr == 1)
 					myFlg = 1;
@@ -748,7 +717,7 @@ public class KMeanRecommender
 					if(v==5)  
 					{
 						simpleKPlusAndLogPowerTree = new SimpleKMeansPlusAndLogPower(trainMMh);
-						simpleKPlusAndLogPowerTree_NoSimThr = new SimpleKMeansPlusAndLogPower(trainMMh);
+						//simpleKPlusAndLogPowerTree_NoSimThr = new SimpleKMeansPlusAndLogPower(trainMMh);
 					}
 
 					if (v==1) {
@@ -811,10 +780,7 @@ public class KMeanRecommender
 
 					if (v==19) {
 						callMethod =new SimpleKMeansSinglePass(trainMMh);
-					}  
-
-				
-						
+					}  		
 
 				}
 
@@ -835,8 +801,9 @@ public class KMeanRecommender
 					writeResults(neighbours, KMeansOrKMeansPlus) ;
 				}
 			}//end of number of iterations
-		} //end fold					 
-
+		} // end no if clusters
+	} //end fold					 
+		
 
 		timer.resetTimer(); 
 
@@ -920,8 +887,7 @@ public class KMeanRecommender
 
 		//________________________________________
 
-		for (int i = 0; i < totalUsers; i++)        
-		{
+		for (int i = 0; i < totalUsers; i++)  {
 
 			uid = users.getQuick(i);  
 			userThereInScenario.add(uid);
@@ -934,56 +900,48 @@ public class KMeanRecommender
 				mid = MemHelper.parseUserOrMovie(movies.getQuick(j));
 
 				timer.start();
-				double rrr = recommend(uid, mid, neighbours);
-	
-				timer.stop();
+				double predictedRating = recommend(uid, mid, neighbours);
+				double actualRating=0.0;
+				actualRating = testmh.getRating(uid, mid);			 		// get actual ratings?
 
 
-				double myRating=0.0;
+				// Should not print this, else there is error
+				if (actualRating==-99 )                           
+					System.out.println(" rating error, uid, mid, rating" + uid + "," + mid + ","+ actualRating);
 
-				myRating = testmh.getRating(uid, mid);			 		// get actual ratings?
-
-
-				if (myRating==-99 )                           
-					System.out.println(" rating error, uid, mid, rating" + uid + "," + mid + ","+ myRating);
-
-				if(rrr>5 || rrr<-1)
-					totalExtremeErrors++;
-
-				else if(Math.abs(rrr-myRating)<=0.5)
-					totalErrorLessThanPoint5++;
-
-
-				else if(Math.abs(rrr-myRating)<=1.0)
-					totalErrorLessThan1++;
-
-				else if (rrr==myRating)
-					totalEquals++;
+//				if(predictedRating>5 || predictedRating<-1)
+//					totalExtremeErrors++;
+//
+//				else if(Math.abs(predictedRating-actualRating)<=0.5)
+//					totalErrorLessThanPoint5++;
+//
+//				else if(Math.abs(predictedRating-actualRating)<=1.0)
+//					totalErrorLessThan1++;
+//
+//				else if (predictedRating==actualRating)
+//					totalEquals++;
 
 
 				//-------------
 				// Add ROC
 				//-------------
-				if(rrr!=0)
-					rmse.ROC4(myRating, rrr, myClasses, trainMMh.getAverageRatingForUser(uid));		
-				//rmse.ROC4(myRating, rrr, myClasses, TopNThreshold);
+				if(predictedRating!=0)
+					rmse.ROC4(actualRating, predictedRating, myClasses, trainMMh.getAverageRatingForUser(uid));		
 
 				//-------------
 				//Add Error
 				//-------------
 
-				if(rrr!=0)
-				{
-					rmse.add(myRating,rrr);                            	
-					midToPredictions.put(mid, rrr);                            	                                
+				if(predictedRating!=0) {
+					rmse.add(actualRating,predictedRating);                            	
+					midToPredictions.put(mid, predictedRating);                            	                                
 				}		
 
 
 				//-------------
 				//Add Coverage
 				//-------------
-
-				rmse.addCoverage(rrr);                                 
+				rmse.addCoverage(predictedRating);                                 
 
 			} //end of movies for
 
@@ -1101,14 +1059,11 @@ public class KMeanRecommender
 		System.out.println("SDInROC  = " +  SDInROC );
 		System.out.println("coverage = " + coverage);
 
-
 		//Reset final values
 		rmse.resetValues();   
 		rmse.resetFinalROC();
 		rmse.resetFinalMAE();
-		/*if(ImputationMethod >2)
-        	rmse.resetPairTPrediction();*/
-
+	
 	}//end of function
 
 
@@ -1151,6 +1106,8 @@ public class KMeanRecommender
 			writeData.append("\n");
 			writeData.append("Variant");
 			writeData.append(",");
+			writeData.append("Number of Clusters");
+			writeData.append(",");
 			writeData.append("Number of Neibours");
 			writeData.append(",");
 			writeData.append("Coverage");
@@ -1168,6 +1125,8 @@ public class KMeanRecommender
 			writeData.append("\n");
 
 			writeData.append(""+ variant);
+			writeData.append(",");
+			writeData.append(""+ kClusters);
 			writeData.append(",");
 			writeData.append(""+neighbours);
 			writeData.append(",");

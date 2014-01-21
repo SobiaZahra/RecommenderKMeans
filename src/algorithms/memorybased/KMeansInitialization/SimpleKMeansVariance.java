@@ -65,6 +65,7 @@ public class SimpleKMeansVariance  extends CallInitializationMethods implements 
 	    	double  avg				= helper.getGlobalAverage();
 	    	int avgI					= (int)avg;
 
+	    	// WHY THIS LOOP????
 	    	for(int i = 0; i < k; i++) 					//for total number of clusters         
 	    	{
 

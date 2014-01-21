@@ -591,12 +591,12 @@ public abstract class CallInitializationMethods implements KMeansVariant
      * @param users, true= distance between two users; false = distance between two movies
      * @return
      */
-    public double  findEucledianDistanceBetweenTwoEntities (int e1, int e2, boolean isUser)
+    public double  findEucledianDistanceBetweenTwoEntities (int entity1, int entity2, boolean isUser)
     {	 	 
    	    double functionResult = 0.0;
    	    double rating1, rating2;
         
-        ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating(e1, e2, isUser);
+        ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating(entity1, entity2, isUser);
         if(ratings.size() ==0)
         	return 0;
         
@@ -611,18 +611,18 @@ public abstract class CallInitializationMethods implements KMeansVariant
     }
   
     /**
-     * 
+     * Find the Eucledian distance between mean and uid or mid 	
      * @param avg
-     * @param e2
+     * @param entity2
      * @param isUser
      * @return
      */
-    public double  findEucledianDistanceBetweenAvgAndEntity (double avg, int e2, boolean isUser)
+    public double  findEucledianDistanceBetweenAvgAndEntity (double avg, int entity2, boolean isUser)
     {	 	 
    	    double functionResult = 0.0;
    	    double rating1, rating2;
    	 
-   	    ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating_ForAvgAndEntity(e2, isUser);
+   	    ArrayList<Pair> ratings = helper.innerJoinOnMoviesOrRating_ForAvgAndEntity(entity2, isUser);
    	    if(ratings.size() ==0)
    	    	return 0;
    	    

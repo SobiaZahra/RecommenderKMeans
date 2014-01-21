@@ -189,7 +189,6 @@ public class SimpleKMeansPlusPlus  extends CallInitializationMethods implements 
 				} //end of else
 
 				// Add the chosen centroid in the list of K centroids
-
 				choenCentroids.add( new Centroid (C,helper));
 
 			}

@@ -1,17 +1,14 @@
 package algorithms.memorybased.KMeansInitialization;
 
 import java.util.*;
-
 import algorithms.memorybased.KMeansInitialization.Centroid;
-
 import netflix.memreader.*;
 import cern.colt.list.*;
 import cern.colt.map.*;
 
 /************************************************************************************************/
-public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods implements KMeansVariant
+public class SimpleKMeansVarianceCorrected_AvgPairWise  extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/ 
-
 {
 	    private MemHelper 	helper;
 	    ArrayList<Centroid> centroids;
@@ -26,7 +23,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	     * Builds the RecTree and saves the resulting clusters.
 	     */
 	    
-	    public SimpleKMeansVarianceCorrected(MemHelper helper) {
+	    public SimpleKMeansVarianceCorrected_AvgPairWise(MemHelper helper) {
 	        this.helper   = helper;
 	    }
 
@@ -56,23 +53,41 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	    	IntArrayList allCentroids = new IntArrayList();		    // All distinct chosen centroids              
 
 	    	int totalPoints			 = dataset.size();			// All users
-	    	int seed					 = 0;						// Centroid			
+	    	int C					 = 0;						// Centroid			
 	    	int possibleC			 = 0;						// A point from dataset
 	    	double possibleCSim		 = 0;	 					// Sim of the point from the dataset
 	    	double  avg				 = helper.getGlobalAverage();
 	    	
 
-	    		
+			// Finding the "Average pairwise Euclidean distance" (d1)
+			double d1 = 0;
+			for (int i=0;i<totalPoints-1;i++) {
+				int user1 = i;
+					for (int j=i+1;j<totalPoints;j++) {
+						int user2 = j;
+						d1  += findEucledianDistanceBetweenTwoEntities (user1, user2, true);		
+				}
+			}
+			// Avg pair wise Eucleadian distance
+			d1  = d1/(totalPoints * (totalPoints-1));
+			
+			
+
+	    	for(int i = 0; i < k; i++) 					//for total number of clusters         
+	    	{
+	    		OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
 
 	    		//------------------------------
 	    		// Find sim to centroid
 	    		//------------------------------
-	    		OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();
+
+	    		// The chnage is, instead of avg of the users, we are taking the average pair wise distance
+	    		// between all users 
 	    		for(int j=0;j<totalPoints;j++) //for all points
 	    		{
 	    			//Get a point
 	    			possibleC  = dataset.get(j);		
-	    			possibleCSim = findEucledianDistanceBetweenAvgAndEntity(avg, possibleC, true);
+	    			possibleCSim = findEucledianDistanceBetweenAvgAndEntity(d1, possibleC, true);
 	    			uidToCentroidSim.put(possibleC, possibleCSim);
 
 	    		}
@@ -86,26 +101,31 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	    		int number	=		0;
 	    		int m;
 
-	    		// Look at this formula, I dont know what It means,
-	    		// But you need to confirm it from the paper
-	    		// sL = x(1+( L-1) *M/K). 
-	    		for (int j=1;j<totalPossibleC; j++ ) {
-	    			m = (j-1)*totalPoints;
+	    		// Here, you have mean and I am sure, there are very simple approaches which are different 
+	    		// from the one proposed in the paper; to choose seeds at varying distance from the mean
+	    	
+	    		// The only problem here is that, we might not be able to add all 'K' seeds here.
+	    		// e.g. lets say k=100 and this loop only find 10 ... how to add rest 90?
+	    		for (int j=1;j<totalPossibleC; j++ )
+	    		{
+
+	    			m= (j-1)*totalPoints;
 	    			number = 1+ m/k;
-	    			seed= myUsers.get(number);
+	    			C= myUsers.get(number);
 	    			
-	    			if(allCentroids.contains(seed) == false) {	 
-	    				allCentroids.add(seed);
-	    				chosenCentroids.add( new Centroid (seed,helper));        					  	
+	    			if(allCentroids.contains(C)==false) {	 
+	    				allCentroids.add(C);        				  			
+	    				chosenCentroids.add( new Centroid (C,helper));	        					  	
 	    			}
 	    			if(chosenCentroids.size() == k){
 	    				break;
 	    			}
 	    		} 
+	    		
+	    		this.centroids = chosenCentroids; 
+	    	}
 
-	       		this.centroids = chosenCentroids; 
-	    		return chosenCentroids;
-
+	    	return chosenCentroids;
 		}
 
  
@@ -116,7 +136,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
       	@Override
       	public String getName(int variant) {
    
-      		return "SimpleKMeansVarianceCorrected";
+      		return "SimpleKMeansVarianceCorrected_AvgPairWise";
       	}
  /*******************************************************************************************************/
  

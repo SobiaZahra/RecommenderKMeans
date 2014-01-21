@@ -1,24 +1,20 @@
 package algorithms.memorybased.KMeansInitialization;
 
 import java.util.*;
-
 import algorithms.memorybased.KMeansInitialization.Centroid;
-
 import netflix.memreader.*;
+import netflix.utilities.MeanOrSD;
 import cern.colt.list.*;
 import cern.colt.map.*;
 
 /************************************************************************************************/
-public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods implements KMeansVariant
+public class SimpleKMeansVarianceCorrectedAnotherVersion  extends CallInitializationMethods implements KMeansVariant
 /************************************************************************************************/ 
 
 {
 	    private MemHelper 	helper;
 	    ArrayList<Centroid> centroids;
-	    ArrayList<Centroid> newCentroids;
-	    OpenIntIntHashMap   clusterMap;
-	    boolean 			converged;					  //Algorithm converged or not
-	    int 				simVersion;
+	    final static int DEVAITION = 2; // 2 stdDev
 	    
 /************************************************************************************************/
 
@@ -26,7 +22,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	     * Builds the RecTree and saves the resulting clusters.
 	     */
 	    
-	    public SimpleKMeansVarianceCorrected(MemHelper helper) {
+	    public SimpleKMeansVarianceCorrectedAnotherVersion(MemHelper helper) {
 	        this.helper   = helper;
 	    }
 
@@ -55,19 +51,18 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	    	newCentroids = new ArrayList<Centroid>(k);        
 	    	IntArrayList allCentroids = new IntArrayList();		    // All distinct chosen centroids              
 
-	    	int totalPoints			 = dataset.size();			// All users
-	    	int seed					 = 0;						// Centroid			
+	    	int totalPoints			 = dataset.size();			// All users			
 	    	int possibleC			 = 0;						// A point from dataset
 	    	double possibleCSim		 = 0;	 					// Sim of the point from the dataset
 	    	double  avg				 = helper.getGlobalAverage();
 	    	
 
-	    		
+	    		OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
 
 	    		//------------------------------
 	    		// Find sim to centroid
 	    		//------------------------------
-	    		OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();
+
 	    		for(int j=0;j<totalPoints;j++) //for all points
 	    		{
 	    			//Get a point
@@ -78,37 +73,72 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	    		}
 	    		
 	    		//Sort them ... "varying distance from overall mean"
-	    		IntArrayList myUsers 	 	= uidToCentroidSim.keys();
-	    		DoubleArrayList myWeights   = uidToCentroidSim.values();      		   
+	    		IntArrayList myUsers = uidToCentroidSim.keys();
+	    		DoubleArrayList myWeights = uidToCentroidSim.values();      		   
 	    		uidToCentroidSim.pairsSortedByValue(myUsers, myWeights);
 
+	    		// standard deviation
 	    		int totalPossibleC = uidToCentroidSim.size();
-	    		int number	=		0;
-	    		int m;
-
-	    		// Look at this formula, I dont know what It means,
-	    		// But you need to confirm it from the paper
-	    		// sL = x(1+( L-1) *M/K). 
-	    		for (int j=1;j<totalPossibleC; j++ ) {
-	    			m = (j-1)*totalPoints;
-	    			number = 1+ m/k;
-	    			seed= myUsers.get(number);
-	    			
-	    			if(allCentroids.contains(seed) == false) {	 
-	    				allCentroids.add(seed);
-	    				chosenCentroids.add( new Centroid (seed,helper));        					  	
-	    			}
-	    			if(chosenCentroids.size() == k){
-	    				break;
-	    			}
-	    		} 
-
-	       		this.centroids = chosenCentroids; 
+	    		double stdDev = MeanOrSD.calculateMeanOrSD (myWeights, totalPossibleC, 1); 
+	    		double threshold  =  0;
+	    		
+	    		// we keep finding the seeds, until we find the max seeds
+	    		for(int t=10;t>=0; t++) {
+		    			threshold = t + stdDev;
+		    			chosenCentroids =  selectAndAddCentroids (  allCentroids,
+							    									chosenCentroids,
+							    									myUsers,
+														    	    myWeights,
+																    totalPossibleC, 
+																    threshold,
+																    avg,
+																    k);
+		    			if(chosenCentroids.size() == k) {
+		    				break;
+		    			}
+		    		}
+	    		
+	    		this.centroids = chosenCentroids; 
 	    		return chosenCentroids;
 
 		}
 
- 
+	    private ArrayList<Centroid> selectAndAddCentroids ( IntArrayList allCentroids,
+	    												    ArrayList<Centroid> chosenCentroids,
+	    												    IntArrayList myUsers,
+	    										    	    DoubleArrayList myWeights,
+	    												    int totalPossibleC, 
+	    												    double threshold,
+	    												    double avg, 
+	    												    int maximumSeeds) {
+	    	
+	    // Here, you have mean and I am sure, there are very simple approaches which are different 
+	    // from the one proposed in the paper; to choose seeds at varying distance from the mean
+		for (int j=1;j<totalPossibleC; j++ )  {
+		
+			// why not use Standard deviation, and using seeds that are away 2SD from mean?
+			int seed = myUsers.get(j);
+			double weight  =myWeights.get(j);
+			
+			// points lying away from avg + threshold (which is essentially stdDev)
+			if( Math.abs(weight - (avg + threshold)) >=0) {
+					
+				if(allCentroids.contains(seed) == false) {
+    				allCentroids.add(seed);
+    				chosenCentroids.add( new Centroid (seed,helper));
+    				break;        					  	
+    			}
+			}
+			
+			if(chosenCentroids.size() == maximumSeeds) {
+				break;
+			}
+		}
+		
+		return chosenCentroids;
+	    	
+	} // only the last one will be added
+		
         //----------------
         //  get variant name
         // ---------------
@@ -116,7 +146,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
       	@Override
       	public String getName(int variant) {
    
-      		return "SimpleKMeansVarianceCorrected";
+      		return "SimpleKMeansVarianceCorrectedAnotherVersion";
       	}
  /*******************************************************************************************************/
  

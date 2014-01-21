@@ -57,7 +57,7 @@ public class SimpleKMeansPlusAndPower extends CallInitializationMethods implemen
 	    public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int k, double cliqueAverage) 
 	    {
 			System.out.println("=========================================");
-			System.out.println("       " + getName(variant));
+			System.out.println("       " + getName());
 			System.out.println("=========================================");
 
 	    	ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);
@@ -203,7 +203,7 @@ public class SimpleKMeansPlusAndPower extends CallInitializationMethods implemen
 		// ---------------
 
 @Override
-public String getName(int variant) {
+public String getName() {
 	
 
 	return "SimpleKMeansPlusAndPower";

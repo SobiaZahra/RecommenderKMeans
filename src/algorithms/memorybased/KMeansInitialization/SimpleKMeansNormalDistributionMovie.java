@@ -59,7 +59,7 @@ public class SimpleKMeansNormalDistributionMovie  extends CallInitializationMeth
 
 
 			System.out.println("=========================================");
-			System.out.println("       " + getName(variant));
+			System.out.println("       " + getName());
 			System.out.println("=========================================");
 			
 			ArrayList<Centroid> centroids = new ArrayList<Centroid>(k);
@@ -113,7 +113,7 @@ public class SimpleKMeansNormalDistributionMovie  extends CallInitializationMeth
 		// ---------------
 
 	@Override
-	public String getName(int variant) {
+	public String getName() {
 		
 	
 		return "SimpleKMeansNormalDistributionMovie";

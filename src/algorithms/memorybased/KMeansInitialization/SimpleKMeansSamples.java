@@ -58,7 +58,7 @@ public class SimpleKMeansSamples extends CallInitializationMethods implements KM
 		{
 
 			System.out.println("=========================================");
-			System.out.println("       " + getName(variant));
+			System.out.println("       " + getName());
 			System.out.println("=========================================");
 
 			ArrayList<Centroid> centroids = new ArrayList<Centroid>(k);
@@ -143,7 +143,7 @@ public class SimpleKMeansSamples extends CallInitializationMethods implements KM
 		// ---------------
 
 @Override
-public String getName(int variant) {
+public String getName() {
 	
 
 	return "SimpleKMeansSamples";

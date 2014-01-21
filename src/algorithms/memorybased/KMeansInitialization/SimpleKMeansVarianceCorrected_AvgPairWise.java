@@ -46,7 +46,7 @@ public class SimpleKMeansVarianceCorrected_AvgPairWise  extends CallInitializati
 		{
 
 			System.out.println("=========================================");
-			System.out.println("       " + getName(variant));
+			System.out.println("       " + getName());
 			System.out.println("=========================================");
 
 	    	ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);
@@ -135,7 +135,7 @@ public class SimpleKMeansVarianceCorrected_AvgPairWise  extends CallInitializati
         // ---------------
 
       	@Override
-      	public String getName(int variant) {
+      	public String getName() {
    
       		return "SimpleKMeansVarianceCorrected_AvgPairWise";
       	}

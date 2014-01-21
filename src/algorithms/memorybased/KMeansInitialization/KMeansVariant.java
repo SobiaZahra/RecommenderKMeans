@@ -33,7 +33,7 @@ public interface KMeansVariant
 	 * @param variant
 	 * @return
 	 */
-	public  String getName(int variant);
+	public  String getName();
 
 	
 

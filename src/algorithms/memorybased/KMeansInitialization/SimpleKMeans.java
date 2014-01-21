@@ -53,7 +53,7 @@ public class SimpleKMeans extends CallInitializationMethods implements KMeansVar
 	{
 		
 		System.out.println("=========================================");
-		System.out.println("       " + getName(variant));
+		System.out.println("       " + getName());
 		System.out.println("=========================================");
 
 		Random rand = new Random();
@@ -98,7 +98,7 @@ public class SimpleKMeans extends CallInitializationMethods implements KMeansVar
 		// ---------------
 
 @Override
-public String getName(int variant) {
+public String getName() {
 	
 
 	return "SimpleKMeans";

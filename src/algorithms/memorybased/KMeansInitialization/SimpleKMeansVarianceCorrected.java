@@ -49,7 +49,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 		{
 
 			System.out.println("=========================================");
-			System.out.println("       " + getName(variant));
+			System.out.println("       " + getName());
 			System.out.println("=========================================");
 
 	    	ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);
@@ -57,7 +57,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	    	IntArrayList allCentroids = new IntArrayList();		    // All distinct chosen centroids              
 
 	    	int totalPoints			 = dataset.size();			// All users
-	    	int seed					 = 0;						// Centroid			
+	    	int seed				 = 0;						// Centroid			
 	    	int possibleC			 = 0;						// A point from dataset
 	    	double possibleCSim		 = 0;	 					// Sim of the point from the dataset
 	    	double  avg				 = helper.getGlobalAverage();
@@ -115,7 +115,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
         // ---------------
 
       	@Override
-      	public String getName(int variant) {
+      	public String getName() {
    
       		return "SimpleKMeansVarianceCorrected";
       	}

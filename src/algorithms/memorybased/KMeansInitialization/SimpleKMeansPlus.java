@@ -54,7 +54,7 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 		
 {
 	System.out.println("=========================================");
-	System.out.println("       " + getName(variant));
+	System.out.println("       " + getName());
 	System.out.println("=========================================");
 
 	Random rand = new Random();
@@ -178,7 +178,7 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 		// ---------------
 
 	@Override
-	public String getName(int variant) {
+	public String getName() {
 		
 	
 		return "SimpleKMeansPlus";

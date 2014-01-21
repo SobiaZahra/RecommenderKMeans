@@ -59,7 +59,7 @@ public class SimpleKMeansNormalDistribution  extends CallInitializationMethods i
 
 
 			System.out.println("=========================================");
-			System.out.println("       " + getName(variant));
+			System.out.println("       " + getName());
 			System.out.println("=========================================");
 			
 			ArrayList<Centroid> centroids = new ArrayList<Centroid>(k);
@@ -117,7 +117,7 @@ public class SimpleKMeansNormalDistribution  extends CallInitializationMethods i
 		// ---------------
 
 @Override
-public String getName(int variant) {
+public String getName() {
 	
 
 	return "SimpleKMeansNormalDistribution";

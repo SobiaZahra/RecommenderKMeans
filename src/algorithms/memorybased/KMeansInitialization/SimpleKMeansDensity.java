@@ -55,7 +55,7 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 	
 	
 		System.out.println("=========================================");
-		System.out.println("       " + getName(variant));
+		System.out.println("       " + getName());
 		System.out.println("=========================================");
 
 //	//------------------------------------------------
@@ -346,7 +346,7 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 	// ---------------
 
 	@Override
-	public String getName(int variant) {
+	public String getName() {
 		
 		String name = "SimpleKMeansDensity";
 		return name;

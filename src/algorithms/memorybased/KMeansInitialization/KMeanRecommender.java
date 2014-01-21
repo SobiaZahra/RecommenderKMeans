@@ -14,6 +14,7 @@ import netflix.algorithms.memorybased.memreader.FilterAndWeight;
 import netflix.recommender.ItemItemRecommender;
 import rmse.RMSECalculator;
 
+import cern.colt.Version;
 import cern.colt.list.DoubleArrayList;
 import cern.colt.list.IntArrayList;
 import cern.colt.list.LongArrayList;
@@ -301,18 +302,10 @@ public class KMeanRecommender
 	public void callKTree(int methodVariant , MemHelper helper, int callNo, int MAX_ITERATIONS )     
 	{
 		
-		timer.start();
-		
-		getObject(methodVariant, helper);
-		
-		timer.stop();
-		timer.resetTimer();
-		
 				//-----------------------
 				// K-Means Plus and 
 				// Log Power
 				//-----------------------    	
-
 
 				 if(KMeansOrKMeansPlus==5)
 				{
@@ -362,7 +355,7 @@ public class KMeanRecommender
 					timer.stop();
 
 					kMeanTime = timer.getTime();
-					System.out.println( clusteringSeedSelection.getName (KMeansOrKMeansPlus) + " -->  took " + timer.getTime() + " s to build");    	
+					System.out.println( clusteringSeedSelection.getName () + " -->  took " + timer.getTime() + " s to build");    	
 					timer.resetTimer();
 				}
 
@@ -620,7 +613,8 @@ public class KMeanRecommender
 	public static void main(String[] args)    
 	{
 
-		String path = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/FiveFoldData/";
+		//String path = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/FiveFoldData/";
+		String path = "/Projects/RecommenderKMeans/DataSets/SML_ML/FiveFoldData/";
 		KMeanRecommender rec = new KMeanRecommender(); 
 		
 		//Compute the results
@@ -642,7 +636,7 @@ public class KMeanRecommender
 		int pThr = 30;
 		
 		final int startK = 10;
-		final int endK = 100;
+		final int endK = 20;
 		final int incK  =10;
 		
 		powerUsersThreshold = pThr;
@@ -660,6 +654,10 @@ public class KMeanRecommender
 		//Keeping everthing fixed, I have to change this manulally and check how it evolves (starts from 1 to 10), keeping the 
 		//other parameters fixed (to the optimal ones)
 		// No of clusters, need to learn keeoing everything fixed
+		
+		//Make the objects and keep them fixed throughout the program
+		for (int v=1;v<=20;v++) {	  
+			
 		for(int k = startK; k < endK; k+=incK) {
 			
 			System.out.println("==========================================================================");
@@ -694,10 +692,7 @@ public class KMeanRecommender
 
 				//	long t1= System.currentTimeMillis();
 
-				//Make the objects and keep them fixed throughout the program
-
-				for (int v=KMeansOrKMeansPlus;v<=20;v++)
-				{	  
+				//System.out.println("Version =" + v);
 					if(v==5)  
 					{
 						simpleKPlusAndLogPowerTree = new SimpleKMeansPlusAndLogPower(trainMMh);
@@ -766,8 +761,6 @@ public class KMeanRecommender
 						callMethod =new SimpleKMeansSinglePass(trainMMh);
 					}  		
 
-				}
-
 	
 				System.out.println("done reading objects");				   	 
 				System.out.println("=====================");
@@ -776,21 +769,21 @@ public class KMeanRecommender
 
 
 				//Build clusters
-		
+				timer.start();
 				callKTree (KMeansOrKMeansPlus, allHelper, myFlg , noItr);//it is converging after 6-7 iterations	
-
-				for (int neighbours = numberOfneighbours; neighbours >=10; neighbours -= 20)
+				timer.stop();
+				System.out.println("Time taken for version = "+ callMethod.getName());
+				for (int neighbours = numberOfneighbours; neighbours >=numberOfneighbours; neighbours -= 20)
 				{
 					testWithMemHelper(testMMh,neighbours);	
 					writeResults(neighbours, KMeansOrKMeansPlus) ;
 				}
 			}//end of number of iterations
 		} // end no if clusters
-	} //end fold					 
-		
-
-		timer.resetTimer(); 
-
+	  } //end fold
+	 
+	} //end version
+	
 		closeFile();
 	}
 
@@ -1081,7 +1074,7 @@ public class KMeanRecommender
 
 		try {
 	
-			variant = clusteringSeedSelection.getName(name);
+			variant = clusteringSeedSelection.getName();
 
 
 			//***********
@@ -1157,71 +1150,71 @@ public class KMeanRecommender
 
 	}
 
-	public  KMeansVariant getObject(int variant, MemHelper helper)
-	{
-
-		if (variant==1) {
-	
-				clusteringSeedSelection = new SimpleKMeans(helper);
-		}
-	
-		else if (variant==2) {
-			 clusteringSeedSelection =new SimpleKMeansPlus(helper);
-		}
-	
-		else if (variant==3) {
-			 clusteringSeedSelection =new SimpleKMeanModifiedPlus(helper);
-		}
-	
-		else if (variant==4) { 
-			 clusteringSeedSelection =new SimpleKMeansPlusAndPower(helper);
-		}
-	
-		else if (variant==9) {
-			clusteringSeedSelection =new SimpleKMeansQuantile(helper);
-		}
-	
-		else if (variant==10) {	
-			clusteringSeedSelection =new SimpleKMeansNormalDistribution(helper);
-		}
-	
-		else if (variant==11) {	
-			 clusteringSeedSelection =new SimpleKMeansVariance(helper);
-		}
-	
-		else if (variant==12) {
-			 clusteringSeedSelection =new SimpleKMeansUniform(helper);
-		}
-	
-		else if (variant==13) {
-			 clusteringSeedSelection =new SimpleKMeansDensity(helper);
-		}
-	
-		else if (variant==14) {
-			 clusteringSeedSelection =new SimpleKMeansSamples(helper);
-		}
-	
-		else if (variant==15) {
-			 clusteringSeedSelection =new SimpleKMeansLog(helper);
-		}
-	
-		else if (variant==16) {
-			 clusteringSeedSelection =new SimpleKMeansHyperGeometric(helper);
-		}
-	
-		else if (variant==17) {
-			 clusteringSeedSelection =new SimpleKMeansPoisson(helper);
-		}
-	
-		else if (variant==18) {
-			clusteringSeedSelection =new SimpleKMeansPlusPlus(helper);
-		}
-	
-		else if (variant==19) {
-			clusteringSeedSelection =new SimpleKMeansSinglePass(helper);
-		}
-		return clusteringSeedSelection;  	
-	}
+//	public  KMeansVariant getObject(int variant, MemHelper helper)
+//	{
+//
+//		if (variant==1) {
+//	
+//				clusteringSeedSelection = new SimpleKMeans(helper);
+//		}
+//	
+//		else if (variant==2) {
+//			 clusteringSeedSelection =new SimpleKMeansPlus(helper);
+//		}
+//	
+//		else if (variant==3) {
+//			 clusteringSeedSelection =new SimpleKMeanModifiedPlus(helper);
+//		}
+//	
+//		else if (variant==4) { 
+//			 clusteringSeedSelection =new SimpleKMeansPlusAndPower(helper);
+//		}
+//	
+//		else if (variant==9) {
+//			clusteringSeedSelection =new SimpleKMeansQuantile(helper);
+//		}
+//	
+//		else if (variant==10) {	
+//			clusteringSeedSelection =new SimpleKMeansNormalDistribution(helper);
+//		}
+//	
+//		else if (variant==11) {	
+//			 clusteringSeedSelection =new SimpleKMeansVariance(helper);
+//		}
+//	
+//		else if (variant==12) {
+//			 clusteringSeedSelection =new SimpleKMeansUniform(helper);
+//		}
+//	
+//		else if (variant==13) {
+//			 clusteringSeedSelection =new SimpleKMeansDensity(helper);
+//		}
+//	
+//		else if (variant==14) {
+//			 clusteringSeedSelection =new SimpleKMeansSamples(helper);
+//		}
+//	
+//		else if (variant==15) {
+//			 clusteringSeedSelection =new SimpleKMeansLog(helper);
+//		}
+//	
+//		else if (variant==16) {
+//			 clusteringSeedSelection =new SimpleKMeansHyperGeometric(helper);
+//		}
+//	
+//		else if (variant==17) {
+//			 clusteringSeedSelection =new SimpleKMeansPoisson(helper);
+//		}
+//	
+//		else if (variant==18) {
+//			clusteringSeedSelection =new SimpleKMeansPlusPlus(helper);
+//		}
+//	
+//		else if (variant==19) {
+//			clusteringSeedSelection =new SimpleKMeansSinglePass(helper);
+//		}
+//		return clusteringSeedSelection;  	
+//	}
 
 }//end class
 

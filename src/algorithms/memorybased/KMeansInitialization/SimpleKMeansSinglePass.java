@@ -68,7 +68,7 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 	//------------------------------------
 
 	System.out.println("=========================================");
-	System.out.println("       " + getName(variant));
+	System.out.println("       " + getName());
 	System.out.println("=========================================");
 
 	ArrayList<Centroid> centroids = new ArrayList<Centroid>(k);
@@ -206,7 +206,7 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 	// ---------------
 
 @Override
-public String getName(int variant) {
+public String getName() {
 	
 
 	return "SimpleKMeansSinglePass";

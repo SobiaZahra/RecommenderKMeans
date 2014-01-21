@@ -52,7 +52,7 @@ public class SimpleKMeansVariance  extends CallInitializationMethods implements 
 		{
 
 			System.out.println("=========================================");
-			System.out.println("       " + getName(variant));
+			System.out.println("       " + getName());
 			System.out.println("=========================================");
 
 	    	ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);
@@ -123,7 +123,7 @@ public class SimpleKMeansVariance  extends CallInitializationMethods implements 
         		// ---------------
 
       	@Override
-      	public String getName(int variant) {
+      	public String getName() {
    
       		return "SimpleKMeansVariance";
       	}

@@ -59,7 +59,7 @@ public class SimpleKMeansPlusPlus  extends CallInitializationMethods implements 
 			
 
 			System.out.println("=========================================");
-			System.out.println("       " + getName(variant));
+			System.out.println("       " + getName());
 			System.out.println("=========================================");
 			////-----------------------------------------------
 			//
@@ -205,7 +205,7 @@ public class SimpleKMeansPlusPlus  extends CallInitializationMethods implements 
 	// ---------------
 
 @Override
-public String getName(int variant) {
+public String getName() {
 	
 
 	return "SimpleKMeansPlusPlus";

@@ -3,9 +3,7 @@ package algorithms.memorybased.KMeansInitialization;
 import java.util.*;
 
 import algorithms.memorybased.KMeansInitialization.Centroid;
-
 import netflix.utilities.*;
-
 import netflix.memreader.*;
 import cern.colt.list.*;
 import cern.colt.map.*;
@@ -197,17 +195,9 @@ public abstract class CallInitializationMethods implements KMeansVariant
 			//------------------------------------
 			// overrides KMeansVariant(interface)
 			//------------------------------------
+	
 			
-//		just calling chooseCentroid neglects the value of variant and every time calls the same class 	
-			
-//			returnedCentroids= chooseCentroids( variant , dataset, k , cliqueAverage);
-
-//			clusteringSeedSelection = kRec.getObject(variant, helper);
-//			returnedCentroids= clusteringSeedSelection.chooseCentroids( variant , dataset, k , cliqueAverage);
-//			centroids =returnedCentroids;
-			
-			
-			centroids = clusteringSeedSelection.chooseCentroids( variant , dataset, k , cliqueAverage);
+			centroids = chooseCentroids( variant , dataset, k , cliqueAverage);
 			 
 			
 		}

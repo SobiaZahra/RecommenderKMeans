@@ -45,7 +45,7 @@ public class SimpleKMeansVarianceCorrectedAnotherVersion  extends CallInitializa
 		{
 
 			System.out.println("=========================================");
-			System.out.println("       " + getName(variant));
+			System.out.println("       " + getName());
 			System.out.println("=========================================");
 
 	    	ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);
@@ -144,7 +144,7 @@ public class SimpleKMeansVarianceCorrectedAnotherVersion  extends CallInitializa
         // ---------------
 
       	@Override
-      	public String getName(int variant) {
+      	public String getName() {
    
       		return "SimpleKMeansVarianceCorrectedAnotherVersion";
       	}

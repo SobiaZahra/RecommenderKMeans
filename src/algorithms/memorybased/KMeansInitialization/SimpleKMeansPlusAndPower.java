@@ -34,6 +34,7 @@ public class SimpleKMeansPlusAndPower extends CallInitializationMethods implemen
 	    
 	    public SimpleKMeansPlusAndPower(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 
 	    }

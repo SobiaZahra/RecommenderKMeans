@@ -37,6 +37,7 @@ import cern.jet.random.HyperGeometric;
 	    
 	    public SimpleKMeansHyperGeometric(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 
 	    }

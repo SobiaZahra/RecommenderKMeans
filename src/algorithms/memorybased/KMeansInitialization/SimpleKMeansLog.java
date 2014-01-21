@@ -34,6 +34,7 @@ public class SimpleKMeansLog  extends CallInitializationMethods implements KMean
 	    
 	    public SimpleKMeansLog(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 	   
 	    }

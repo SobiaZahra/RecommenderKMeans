@@ -36,6 +36,7 @@ public class SimpleKMeansSinglePass extends CallInitializationMethods implements
 	    
 	    public SimpleKMeansSinglePass(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 
 	    }

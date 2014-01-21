@@ -35,7 +35,7 @@ public class SimpleKMeanModifiedPlus extends CallInitializationMethods implement
 	     */
 	    
 	    public SimpleKMeanModifiedPlus(MemHelper helper)    
-	    {
+	    {	super(helper);
 	        this.helper   = helper;
 	   
 	    }

@@ -24,6 +24,7 @@ public class SimpleKMeansVarianceCorrected_AvgPairWise  extends CallInitializati
 	     */
 	    
 	    public SimpleKMeansVarianceCorrected_AvgPairWise(MemHelper helper) {
+	    	super (helper);
 	        this.helper   = helper;
 	    }
 

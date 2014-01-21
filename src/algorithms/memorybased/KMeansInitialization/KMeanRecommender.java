@@ -34,30 +34,30 @@ public class KMeanRecommender
 	private String 							variant;
 
 	 //Objects of some classes
-	static MemHelper 	trainMMh;
-	MemHelper 			allHelper;
-	MemHelper 			testMMh;
-	MeanOrSD			MEANORSD;
-	Timer227 			timer;
-	FilterAndWeight		myUserBasedFilter;   //Filter and Weight, for User-based CF
-	ItemItemRecommender	myItemRec;		     //item-based CF    
+	private static MemHelper 	trainMMh;
+	private MemHelper 			allHelper;
+	private MemHelper 			testMMh;
+	private MeanOrSD			MEANORSD;
+	private Timer227 			timer;
+	private FilterAndWeight		myUserBasedFilter;   //Filter and Weight, for User-based CF
+	private ItemItemRecommender	myItemRec;		     //item-based CF    
 
 
 	private long 		kMeanTime;
 	private int         kClusters;
 
-	BufferedWriter      writeData;
+	private BufferedWriter      writeData;
 
 	private String      myPath;
 	private int         totalNan=0;
 	private int         totalNegatives=0;
 	private int			KMeansOrKMeansPlus; 
 	private int			simVersion;
-	ArrayList<Centroid> centroids;
+	private ArrayList<Centroid> centroids;
 
 	// version of the seed selection to be called
 
-	public KMeansVariant clusteringSeedSelection = null;
+	private KMeansVariant clusteringSeedSelection = null;
 	
 	//Related to finding the gray sheep user's predictions
 
@@ -66,101 +66,101 @@ public class KMeanRecommender
 	private int			numberOfneighbours;						// no. of neighbouring cluster for an active user
 
 	//Regarding Results
-	double 								MAE;
-	double								MAEPerUser;
-	double 								RMSE;
-	double 								RMSEPerUser;
-	double								Roc;
-	double								coverage;
-	double								pValue;
-	double								kMeanEigen_Nmae;
-	double								kMeanCluster_Nmae;
+	private double 								MAE;
+	private double								MAEPerUser;
+	private double 								RMSE;
+	private double  								RMSEPerUser;
+	private double								Roc;
+	private double								coverage;
+	private double								pValue;
+	private double								kMeanEigen_Nmae;
+	private double								kMeanCluster_Nmae;
 
 	//SD in one fold or when we do hold-out like 20-80
-	double								SDInMAE;
-	double								SDInROC;
-	double 								SDInTopN_Precision[];
-	double 								SDInTopN_Recall[];
-	double 								SDInTopN_F1[];	
+	private double								SDInMAE;
+	private double								SDInROC;
+	private double 								SDInTopN_Precision[];
+	private double 								SDInTopN_Recall[];
+	private double 								SDInTopN_F1[];	
 
-	double            					precision[];		//evaluations   
-	double              				recall[];   
-	double              				F1[];    
+	private double            					precision[];		//evaluations   
+	private double              				recall[];   
+	private double              				F1[];    
 	private OpenIntDoubleHashMap 		midToPredictions;	//will be used for top_n metrics (pred*100, actual)
 
 	//1: fold, 2: k, 3:dim
-	double              array_MAE[][];	      			// [gsu][fold]
-	double              array_MAEPerUser[][];
-	double              array_NMAE[][];
-	double              array_NMAEPerUser[][];
-	double              array_RMSE[][];
-	double              array_RMSEPerUser[][];
-	double              array_Coverage[][];
-	double              array_ROC[][];
-	double              array_BuildTime[][];
+	private double              array_MAE[][];	      			// [gsu][fold]
+	private double              array_MAEPerUser[][];
+	private double              array_NMAE[][];
+	private double              array_NMAEPerUser[][];
+	private double              array_RMSE[][];
+	private double              array_RMSEPerUser[][];
+	private double              array_Coverage[][];
+	private double              array_ROC[][];
+	private double              array_BuildTime[][];
 
 
-	double              array_Precision[][][]; 		   //[topnN][gsu][fold]
-	double              array_Recall[][][];
-	double              array_F1[][][];    
+	private double              array_Precision[][][]; 		   //[topnN][gsu][fold]
+	private double              array_Recall[][][];
+	private double              array_F1[][][];    
 
 	//will store the grid results in the form of mean and sd
-	double				gridResults_Mean_MAE[];
-	double				gridResults_Mean_MAEPerUser[];
-	double				gridResults_Mean_NMAE[];
-	double				gridResults_Mean_NMAEPerUser[];
-	double				gridResults_Mean_RMSE[];
-	double				gridResults_Mean_RMSEPerUser[];
-	double				gridResults_Mean_ROC[];		
+	private double				gridResults_Mean_MAE[];
+	private double				gridResults_Mean_MAEPerUser[];
+	private double				gridResults_Mean_NMAE[];
+	private double				gridResults_Mean_NMAEPerUser[];
+	private double				gridResults_Mean_RMSE[];
+	private double				gridResults_Mean_RMSEPerUser[];
+	private double				gridResults_Mean_ROC[];		
 
-	double				gridResults_Mean_Precision[][];   	//[TOPn][][]
-	double				gridResults_Mean_Recall[][];
-	double				gridResults_Mean_F1[][];
-	double				gridResults_Mean_Coverage[];
+	private double				gridResults_Mean_Precision[][];   	//[TOPn][][]
+	private double				gridResults_Mean_Recall[][];
+	private double				gridResults_Mean_F1[][];
+	private double				gridResults_Mean_Coverage[];
 
-	double				gridResults_Sd_MAE[];
-	double				gridResults_Sd_MAEPerUser[];
-	double				gridResults_Sd_NMAE[];
-	double				gridResults_Sd_NMAEPerUser[];
-	double				gridResults_Sd_RMSE[];
-	double				gridResults_Sd_RMSEPerUser[];
-	double				gridResults_Sd_ROC[];			
+	private double				gridResults_Sd_MAE[];
+	private double				gridResults_Sd_MAEPerUser[];
+	private double				gridResults_Sd_NMAE[];
+	private double				gridResults_Sd_NMAEPerUser[];
+	private double				gridResults_Sd_RMSE[];
+	private double				gridResults_Sd_RMSEPerUser[];
+	private double				gridResults_Sd_ROC[];			
 
-	double				gridResults_Sd_Precision[][];
-	double				gridResults_Sd_Recall[][];
-	double				gridResults_Sd_F1[][];
-	double				gridResults_Sd_Coverage[];
+	private double				gridResults_Sd_Precision[][];
+	private double				gridResults_Sd_Recall[][];
+	private double				gridResults_Sd_F1[][];
+	private double				gridResults_Sd_Coverage[];
 
-	double              mean_MAE[];	      					// Means of results, got from diff folds
-	double              mean_MAEPerUser[];
-	double              mean_NMAE[];						// for each version
-	double              mean_NMAEPerUser[];
-	double              mean_RMSE[];
-	double              mean_RMSEPerUser[];
-	double              mean_Coverage[];
-	double              mean_ROC[];
-	double              mean_BuildTime[];
-	double              mean_Precision[][];   
-	double              mean_Recall[][];   
-	double              mean_F1[][];       
+	private double              mean_MAE[];	      					// Means of results, got from diff folds
+	private double              mean_MAEPerUser[];
+	private double              mean_NMAE[];						// for each version
+	private double              mean_NMAEPerUser[];
+	private double              mean_RMSE[];
+	private double              mean_RMSEPerUser[];
+	private double              mean_Coverage[];
+	private double              mean_ROC[];
+	private double              mean_BuildTime[];
+	private double              mean_Precision[][];   
+	private double              mean_Recall[][];   
+	private double              mean_F1[][];       
 
-	double              sd_MAE[];		      					// SD of results, got from diff folds
-	double              sd_MAEPerUser[];
-	double              sd_NMAE[];								// for each version
-	double              sd_NMAEPerUser[];
-	double              sd_RMSE[];
-	double              sd_RMSEPerUser[];
-	double              sd_Coverage[];
-	double              sd_ROC[];
-	double              sd_BuildTime[];
-	double              sd_Precision[][];   
-	double              sd_Recall[][];   
-	double              sd_F1[][];   
+	private double              sd_MAE[];		      					// SD of results, got from diff folds
+	private double              sd_MAEPerUser[];
+	private double              sd_NMAE[];								// for each version
+	private double              sd_NMAEPerUser[];
+	private double              sd_RMSE[];
+	private double              sd_RMSEPerUser[];
+	private double              sd_Coverage[];
+	private double              sd_ROC[];
+	private double              sd_BuildTime[];
+	private double              sd_Precision[][];   
+	private double              sd_Recall[][];   
+	private double              sd_F1[][];   
 
 
-	int 				myFlg;
-	int 				currentFold;
-	IntArrayList		myCentroids1, myCentroids2,myCentroids3,myCentroids4,myCentroids5;
+	private int 				myFlg;
+	private  int 				currentFold;
+	private  IntArrayList		myCentroids1, myCentroids2,myCentroids3,myCentroids4,myCentroids5;
 
 
 	/************************************************************************************************/
@@ -328,19 +328,7 @@ public class KMeanRecommender
 					System.out.println("KMeans Plus and Log Power Tree took " + kMeanTime + " s to build");    	
 					System.out.println("");    	
 					timer.resetTimer();
-					/*
-					if(currentFold==1)
-						myCentroids1   = 	simpleKPlusAndLogPowerTree.get_previous_Centroids();
-					else if(currentFold==2)
-						myCentroids2   = 	simpleKPlusAndLogPowerTree.get_previous_Centroids();
-					else if(currentFold==3)
-						myCentroids3   = 	simpleKPlusAndLogPowerTree.get_previous_Centroids();
-					else if(currentFold==4)
-						myCentroids4   = 	simpleKPlusAndLogPowerTree.get_previous_Centroids();
-					else if(currentFold==5)
-						myCentroids5   = 	simpleKPlusAndLogPowerTree.get_previous_Centroids();
-					 */
-
+					
 					timer.start(); 
 					if(currentFold==1)
 						simpleKPlusAndLogPowerTree_NoSimThr.cluster(kClusters, 1, MAX_ITERATIONS, simVersion, -10, powerUsersThreshold,0,  myCentroids1);
@@ -649,11 +637,7 @@ public class KMeanRecommender
 
 	public void computeResults(String path)
 	{   
-		myPath = path;
-
-		//optimal clusters, (1) sml =150, (2) ft1= 100, ft5 = 140
-
-		//		myTotalFolds = 5; 
+		myPath = path; 
 		myTotalFolds = 1; 
 		int pThr = 30;
 		
@@ -1236,9 +1220,8 @@ public class KMeanRecommender
 		else if (variant==19) {
 			clusteringSeedSelection =new SimpleKMeansSinglePass(helper);
 		}
-		return clusteringSeedSelection;  
-	
+		return clusteringSeedSelection;  	
 	}
 
-
 }//end class
+

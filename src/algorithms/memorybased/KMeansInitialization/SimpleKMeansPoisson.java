@@ -35,6 +35,7 @@ public class SimpleKMeansPoisson extends CallInitializationMethods implements KM
 	    
 	    public SimpleKMeansPoisson(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 
 	    }

@@ -433,8 +433,7 @@ class Centroid
           LongArrayList myMovies = helper.getMoviesSeenByUser(uid);
 //          int moviesSeen = myMovies.size();
           
-           for (int i=0;i<myMovies.size();i++)         
-            {
+           for (int i=0;i<myMovies.size();i++)    {
          	  	int mid = (int) myMovies.getQuick(i);
                  rating1 = (double) MemHelper.parseRating(mid) - activeAvg;
                  rating2 = targetAvg;
@@ -446,9 +445,7 @@ class Centroid
              }
              
              
-            if (bottomSumActive != 0 && bottomSumTarget != 0)
-            {    	
-            	
+            if (bottomSumActive != 0 && bottomSumTarget != 0) {    	
          	functionResult = (1 * topSum) / Math.sqrt(bottomSumActive * bottomSumTarget);  //why multiply by n?   	
             	
          	return  functionResult; //simple send    	
@@ -1408,30 +1405,24 @@ class Centroid
     				*/
     				centroidIndex++;
     			}
-    		
-    		
+    			
     		//________________________________________________
-    		
-    		
-    		
+    		    		
     		topSum += rating1 * rating2;
     		bottomSumUser += rating1 * rating1;
     		bottomSumCentroid += rating2 * rating2;
-    		
-    		
+    				
     	}
-    	
-    
     	
     	// This handles an emergency case of dividing by zero
     	if(bottomSumUser != 0 && bottomSumCentroid != 0)        	
     	weight = topSum / (Math.sqrt(bottomSumUser) * Math.sqrt(bottomSumCentroid));
     	
-    	//System.out.println("topSum: " + topSum + "\nbottomSumUser " + bottomSumUser + "\nbottomSumCentroid " + bottomSumCentroid);
+    	// System.out.println("topSum: " + topSum + "\nbottomSumUser " + bottomSumUser + "\nbottomSumCentroid " + bottomSumCentroid);
     	
-    	//System.out.println("weight found is " + weight);
+    	// System.out.println("weight found is " + weight);
     	
-    	//    return Math.abs(weight);       //why mod??
+    	// return Math.abs(weight);       //why mod??
     	
     	/*if(weight ==0)
     	{

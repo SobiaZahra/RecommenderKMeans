@@ -17,37 +17,35 @@ public abstract class CallInitializationMethods implements KMeansVariant
 
 {
 	
-	public KMeansVariant clusteringSeedSelection = null;
+	private KMeansVariant clusteringSeedSelection = null;
 	// initialize class here 
-	public KMeanRecommender 						kRec;
-	public SimpleKMeans		    			simpleKTree;
-	static MemHelper 	helper;
+	
+	// You dont need KRec here, else what is the point od having polymorphism?
+	private KMeanRecommender 		kRec;
+	private SimpleKMeans		    kmeans;
+	private static MemHelper 		helper;
 
-	private int       			howManyClusters   	= 8;
+	private int       			howManyClusters;
 	private	int 				callNo;					 //call how many times this file been called
 	private int					myCount;				 //calculate the no. of iterations
-	Timer227 					timer;
+	private Timer227 			timer;
 	private int 				methodVariant;
 
 	private ArrayList<IntArrayList> 	finalClusters;
 	private OpenIntIntHashMap 			uidToCluster;
 
-	 static ArrayList<Centroid> centroids;
-	ArrayList<Centroid> returnedCentroids;
-	public ArrayList<Centroid> newCentroids;
-	OpenIntIntHashMap   clusterMap;
-	boolean 			converged;					  //Algorithm converged or not
-	 static int 				simVersion;
+	private static ArrayList<Centroid>  centroids;
+	private ArrayList<Centroid> 	    newCentroids;
+	private OpenIntIntHashMap   		clusterMap;
+	private boolean 					converged;					  //Algorithm converged or not
+	private static int 				    simVersion;
 	    
 /************************************************************************************************/
 
-	public CallInitializationMethods()     
+	public CallInitializationMethods(MemHelper trainMMh)     
 	{
 
-		helper =KMeanRecommender.trainMMh;
-
-	
-		kRec = new KMeanRecommender();
+		this.helper = trainMMh;
 		finalClusters = new ArrayList<IntArrayList>(); //Creates ArrayList with initial default capacity 10.
 		uidToCluster  = new OpenIntIntHashMap();       // <E> is for an element in the arraylist
 		clusterMap 	  = new OpenIntIntHashMap();
@@ -71,7 +69,10 @@ public abstract class CallInitializationMethods implements KMeansVariant
 		callNo			= call;
 		simVersion		= sVersion;	    	
 
-		finalClusters 	= constructRecTreeM	(methodVariant, helper.getListOfUsers(), howManyClusters, helper.getGlobalAverage());
+		finalClusters 	= constructRecTreeM	(methodVariant,
+											helper.getListOfUsers(), 
+											howManyClusters, 
+											helper.getGlobalAverage());
 
 		//-------------------
 		// Make map
@@ -162,7 +163,7 @@ public abstract class CallInitializationMethods implements KMeansVariant
 	{
 		ArrayList<IntArrayList> clusters = new ArrayList<IntArrayList>(currDepth);
 
-		ClusterCollection subClusters = kMeans ( variant , dataset,howManyClusters, cliqueAverage);
+		ClusterCollection subClusters = kMeans ( variant , dataset, howManyClusters, cliqueAverage);
 
 
 		for(int i = 0; i < currDepth; i++) //for number of clusters we have (K)      
@@ -201,9 +202,14 @@ public abstract class CallInitializationMethods implements KMeansVariant
 			
 //			returnedCentroids= chooseCentroids( variant , dataset, k , cliqueAverage);
 
-			clusteringSeedSelection = kRec.getObject(variant, helper);
-			returnedCentroids= clusteringSeedSelection.chooseCentroids( variant , dataset, k , cliqueAverage);
-			centroids =returnedCentroids;	    
+//			clusteringSeedSelection = kRec.getObject(variant, helper);
+//			returnedCentroids= clusteringSeedSelection.chooseCentroids( variant , dataset, k , cliqueAverage);
+//			centroids =returnedCentroids;
+			
+			
+			centroids = clusteringSeedSelection.chooseCentroids( variant , dataset, k , cliqueAverage);
+			 
+			
 		}
 		
 		newCentroids = new ArrayList<Centroid>(k);
@@ -234,9 +240,9 @@ public abstract class CallInitializationMethods implements KMeansVariant
 			{
 				point = dataset.get(i);  						    // a uid             
 
-				newCluster = findClosestCentroid(point, 			//This point is closest to this newCluster (return index of that centroid from centroids) 	
-						centroids, 
-						cliqueAverage);
+				newCluster = findClosestCentroid (point, 			//This point is closest to this newCluster (return index of that centroid from centroids) 	
+												  centroids, 
+												  cliqueAverage);
 
 				//----------------------------------------------------------
 				//This is the first pass through the data. We add
@@ -696,11 +702,13 @@ public abstract class CallInitializationMethods implements KMeansVariant
 
     /***********************************************************************************************************/
 
-	public ArrayList<Centroid> chooseCentroids(int variant,
-			IntArrayList dataset, int k, double cliqueAverage) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+ // We dont need that, it will be overriden in the child classes automatically
+ 
+//	public ArrayList<Centroid> chooseCentroids(int variant,
+//			IntArrayList dataset, int k, double cliqueAverage) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 
 

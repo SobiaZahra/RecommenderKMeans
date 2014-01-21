@@ -36,6 +36,7 @@ public class SimpleKMeansNormalDistributionUser  extends CallInitializationMetho
 	    
 	    public SimpleKMeansNormalDistributionUser(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 	
 	    }

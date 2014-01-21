@@ -33,6 +33,7 @@ public class SimpleKMeansPlusPlus  extends CallInitializationMethods implements 
 	    
 	    public SimpleKMeansPlusPlus(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 
 	    }

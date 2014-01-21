@@ -32,6 +32,7 @@ public class SimpleKMeansSamples extends CallInitializationMethods implements KM
 	    
 	    public SimpleKMeansSamples(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 	
 	    }

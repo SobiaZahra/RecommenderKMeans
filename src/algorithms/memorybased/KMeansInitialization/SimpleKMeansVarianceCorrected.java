@@ -27,6 +27,7 @@ public class SimpleKMeansVarianceCorrected  extends CallInitializationMethods im
 	     */
 	    
 	    public SimpleKMeansVarianceCorrected(MemHelper helper) {
+	    	super (helper);
 	        this.helper   = helper;
 	    }
 

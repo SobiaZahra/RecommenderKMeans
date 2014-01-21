@@ -30,6 +30,7 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 	    
 	    public SimpleKMeansDensity(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 
 	    }
@@ -195,8 +196,7 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 //
 //	}
 
-		ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);
-		newCentroids = new ArrayList<Centroid>(k);        
+		ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);        
 		IntArrayList allCentroids = new IntArrayList();		  // All distinct chosen centroids              
 		int totalPoints		 = dataset.size();			// All users
 		int seedID		  	 = 0;						// Centroid
@@ -268,8 +268,7 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 							  false); // do we need to check condition
 
 		} //end if
-			    
-		this.centroids = chosenCentroids; 
+			     
 		return chosenCentroids;
 
 	}

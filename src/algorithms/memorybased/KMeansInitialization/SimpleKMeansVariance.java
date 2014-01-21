@@ -29,6 +29,7 @@ public class SimpleKMeansVariance  extends CallInitializationMethods implements 
 	    
 	    public SimpleKMeansVariance(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 
 	    }

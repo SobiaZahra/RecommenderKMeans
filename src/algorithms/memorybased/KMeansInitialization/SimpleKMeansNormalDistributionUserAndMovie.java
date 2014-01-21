@@ -36,6 +36,7 @@ public class SimpleKMeansNormalDistributionUserAndMovie  extends CallInitializat
 	    
 	    public SimpleKMeansNormalDistributionUserAndMovie(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 	
 	    }

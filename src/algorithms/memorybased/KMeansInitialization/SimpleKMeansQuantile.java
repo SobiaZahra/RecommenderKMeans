@@ -33,6 +33,7 @@ public class SimpleKMeansQuantile  extends CallInitializationMethods implements 
 	    
 	    public SimpleKMeansQuantile(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 	   
 	    }

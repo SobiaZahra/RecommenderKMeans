@@ -32,6 +32,7 @@ public class SimpleKMeansUniform extends CallInitializationMethods implements KM
 	    
 	    public SimpleKMeansUniform(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 
 	    }

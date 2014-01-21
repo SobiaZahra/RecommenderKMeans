@@ -23,6 +23,7 @@ public class SimpleKMeansVarianceCorrectedAnotherVersion  extends CallInitializa
 	     */
 	    
 	    public SimpleKMeansVarianceCorrectedAnotherVersion(MemHelper helper) {
+	    	super (helper);
 	        this.helper   = helper;
 	    }
 
@@ -48,8 +49,7 @@ public class SimpleKMeansVarianceCorrectedAnotherVersion  extends CallInitializa
 			System.out.println("=========================================");
 
 	    	ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);
-	    	newCentroids = new ArrayList<Centroid>(k);        
-	    	IntArrayList allCentroids = new IntArrayList();		    // All distinct chosen centroids              
+	       	IntArrayList allCentroids = new IntArrayList();		    // All distinct chosen centroids              
 
 	    	int totalPoints			 = dataset.size();			// All users			
 	    	int possibleC			 = 0;						// A point from dataset

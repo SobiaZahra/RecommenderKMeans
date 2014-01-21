@@ -27,17 +27,12 @@ public class SimpleKMeans extends CallInitializationMethods implements KMeansVar
 
 	    public SimpleKMeans(MemHelper helper)    
 	    {
+	    	super (helper);
 	        this.helper   = helper;
 
 	    }
 	    
 
-	    public SimpleKMeans(MemHelper helper, int variant, IntArrayList dataset,int k, double cliqueAverage)    
-	    {
-	        this.helper   = helper;
-	        chooseCentroids(variant, dataset,k,cliqueAverage);
-
-	    }
 	    
 	
 /**********************************************************************************************/

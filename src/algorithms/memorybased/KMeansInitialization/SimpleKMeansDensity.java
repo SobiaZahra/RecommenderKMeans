@@ -268,7 +268,8 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 							  false); // do we need to check condition
 
 		} //end if
-			     
+			 
+		System.out.println("Size of the cluster is = "+ chosenCentroids.size());
 		return chosenCentroids;
 
 	}

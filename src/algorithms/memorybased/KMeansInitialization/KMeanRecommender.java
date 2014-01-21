@@ -355,7 +355,7 @@ public class KMeanRecommender
 					timer.stop();
 
 					kMeanTime = timer.getTime();
-					System.out.println( clusteringSeedSelection.getName () + " -->  took " + timer.getTime() + " s to build");    	
+					System.out.println( callMethod.getName () + " -->  took " + timer.getTime() + " s to build");    	
 					timer.resetTimer();
 				}
 
@@ -636,7 +636,7 @@ public class KMeanRecommender
 		int pThr = 30;
 		
 		final int startK = 10;
-		final int endK = 20;
+		final int endK = 10;
 		final int incK  =10;
 		
 		powerUsersThreshold = pThr;
@@ -648,7 +648,7 @@ public class KMeanRecommender
 		simThreshold = sThr/(2* 10.0);	
 		int noNeigh = 70;
 		numberOfneighbours = noNeigh;
-		final int MAX_ITERATIONS = 10;
+		final int MAX_ITERATIONS = 2;
 		
 
 		//Keeping everthing fixed, I have to change this manulally and check how it evolves (starts from 1 to 10), keeping the 
@@ -656,9 +656,11 @@ public class KMeanRecommender
 		// No of clusters, need to learn keeoing everything fixed
 		
 		//Make the objects and keep them fixed throughout the program
-		for (int v=1;v<=20;v++) {	  
+		for (int version=6;version<=20;version++) {	  
 			
-		for(int k = startK; k < endK; k+=incK) {
+			System.out.println("Version is changed to ="+ version);
+			
+		for(int k = startK; k <= endK; k+=incK) {
 			
 			System.out.println("==========================================================================");
 			System.out.println(" Clusters = "+ k);
@@ -693,71 +695,71 @@ public class KMeanRecommender
 				//	long t1= System.currentTimeMillis();
 
 				//System.out.println("Version =" + v);
-					if(v==5)  
+					if(version==5)  
 					{
 						simpleKPlusAndLogPowerTree = new SimpleKMeansPlusAndLogPower(trainMMh);
 						//simpleKPlusAndLogPowerTree_NoSimThr = new SimpleKMeansPlusAndLogPower(trainMMh);
 					}
 
-					if (v==1) {
+					if (version==1) {
 
 							callMethod = new SimpleKMeans(trainMMh);
 
 					}
 
-					if (v==2) {
+					if (version==2) {
 						callMethod =new SimpleKMeansPlus(trainMMh);
 					}
 
-					if (v==3) {
+					if (version==3) {
 						callMethod =new SimpleKMeanModifiedPlus(trainMMh);
 					}
 
-					if (v==4) { 
+					if (version==4) { 
 						callMethod =new SimpleKMeansPlusAndPower(trainMMh);
 					}
 
-					if (v==9) {
+					if (version==9) {
 						callMethod =new SimpleKMeansQuantile(trainMMh);
 					}
 
-					if (v==10) {	
+					if (version==10) {	
 						callMethod =new SimpleKMeansNormalDistribution(trainMMh);
 					}
 
-					if (v==11) {	
+					if (version==11) {	
 						callMethod =new SimpleKMeansVariance(trainMMh);
 					}
 
-					if (v==12) {
+					if (version==12) {
 						callMethod =new SimpleKMeansUniform(trainMMh);
 					}
 
-					if (v==13) {
+					if (version==13) {
 						callMethod =new SimpleKMeansDensity(trainMMh);
 					}
 
-					if (v==14) {
+					if (version==14) {
 						callMethod =new SimpleKMeansSamples(trainMMh);
 					}
 
-					if (v==15) {
+					if (version==15) {
 						callMethod =new SimpleKMeansLog(trainMMh);
 					}
 
-					if (v==16) {
+					if (version==16) {
 						callMethod =new SimpleKMeansHyperGeometric(trainMMh);
 					}
 
-					if (v==17) {
+					if (version==17) {
 						callMethod =new SimpleKMeansPoisson(trainMMh);
 					}
 
-					if (v==18) {
+					if (version==18) {
 						callMethod =new SimpleKMeansPlusPlus(trainMMh);
 					}
 
-					if (v==19) {
+					if (version==19) {
 						callMethod =new SimpleKMeansSinglePass(trainMMh);
 					}  		
 
@@ -773,7 +775,8 @@ public class KMeanRecommender
 				callKTree (KMeansOrKMeansPlus, allHelper, myFlg , noItr);//it is converging after 6-7 iterations	
 				timer.stop();
 				System.out.println("Time taken for version = "+ callMethod.getName());
-				for (int neighbours = numberOfneighbours; neighbours >=numberOfneighbours; neighbours -= 20)
+				int neighbours =10;
+				//for (int neighbours = numberOfneighbours; neighbours >=numberOfneighbours; neighbours -= 20)
 				{
 					testWithMemHelper(testMMh,neighbours);	
 					writeResults(neighbours, KMeansOrKMeansPlus) ;
@@ -1074,7 +1077,7 @@ public class KMeanRecommender
 
 		try {
 	
-			variant = clusteringSeedSelection.getName();
+			variant =  callMethod.getName();
 
 
 			//***********

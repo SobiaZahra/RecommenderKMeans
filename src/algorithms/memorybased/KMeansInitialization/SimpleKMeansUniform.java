@@ -55,10 +55,8 @@ public class SimpleKMeansUniform extends CallInitializationMethods implements KM
 
 		@Override
 		public ArrayList<Centroid> chooseCentroids(int variant,IntArrayList dataset, int k, double cliqueAverage) 
-		
 		{
-
-
+			
 			System.out.println("=========================================");
 			System.out.println("       " + getName());
 			System.out.println("=========================================");
@@ -81,59 +79,62 @@ public class SimpleKMeansUniform extends CallInitializationMethods implements KM
 			avg= helper.getGlobalAverage();
 			//	         avgMov= helper.getGlobalMovAverage();
 
-			int avgI					= (int)avg;
+			int avgI  = (int)avg;
 
-
+			
 			for(int i = 0; i < k; i++)         
-			{     OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
+			{     
+				System.out.println("Inside K clusers");
+				OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
 
-			//------------------------------
-			// Find sim to centroid
-			//------------------------------
-
-			for(int j=0;j<totalPoints;j++) //for all points
-			{
-				//Get a point
-				possibleC  	   = dataset.get(j);		
-				possibleCSim =  findSimPCCBetweenACentroidAndUser(possibleC, avgI);
-				uidToCentroidSim.put(possibleC, possibleCSim);
-
-			}
-			IntArrayList myUsers 	 	= uidToCentroidSim.keys();
-			DoubleArrayList myWeights    =uidToCentroidSim.values();      		   
-			uidToCentroidSim.pairsSortedByValue(myUsers, myWeights);
-
-			//	     	int totalPossibleC = uidToCentroidSim.size();   
-			int  	min = myUsers.get(1);
-			int 	max= myUsers.get(totalPoints-1);
-			while(true)        		
-			{   
-				//------------------
-				//Uniform distribution 
-				//------------------
-
-				//	              Uniform unif;
-				//	      		unif=new Uniform(0,k,avgI);
-				//	     			number= unif.nextInt();
-
-				//-------------------------------
-				//Uniform distribution with min max
-				//--------------------------------
-
-				number= Uniform.staticNextIntFromTo(min, max);
-
-
-				C=dataset.get(number);
-				if(!centroidAlreadyThere.contains(C));
+				//------------------------------
+				// Find sim to centroid
+				//------------------------------
+	
+				for(int j=0;j<totalPoints;j++) //for all points
 				{
-					centroidAlreadyThere.add(C);
-					break;
+					//Get a point
+					possibleC  	   = dataset.get(j);		
+					possibleCSim =  findSimPCCBetweenACentroidAndUser(possibleC, avgI);
+					uidToCentroidSim.put(possibleC, possibleCSim);
+	
 				}
-			}
-
-			centroids.add( new Centroid (C,helper));
-			chosenCentroids.add(C);
-
+				
+				IntArrayList myUsers 	 	= uidToCentroidSim.keys();
+				DoubleArrayList myWeights    =uidToCentroidSim.values();      		   
+				uidToCentroidSim.pairsSortedByValue(myUsers, myWeights);
+	
+				//	     	int totalPossibleC = uidToCentroidSim.size();   
+				int  min = myUsers.get(1);
+				int  max = myUsers.get(totalPoints-1);
+				while(true)        		
+				{   
+					//------------------
+					//Uniform distribution 
+					//------------------
+	
+					//	              Uniform unif;
+					//	      		unif=new Uniform(0,k,avgI);
+					//	     			number= unif.nextInt();
+	
+					//-------------------------------
+					//Uniform distribution with min max
+					//--------------------------------
+	
+					number= Uniform.staticNextIntFromTo(min, max);
+	
+	
+					C=dataset.get(number);
+					if(!centroidAlreadyThere.contains(C));
+					{
+						centroidAlreadyThere.add(C);
+						break;
+					}
+				}//end while
+	
+				centroids.add( new Centroid (C,helper));
+				chosenCentroids.add(C);
+	
 			}
 
 			return centroids;

@@ -665,7 +665,10 @@ public class MemReader implements Serializable
         	// FT
 //        	 sourceFile  =  "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\FT\\ft_myRatings.dat";
 //        	 destFile    =  "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\FT\\ft_storedFeaturesRatingsTF.dat";
-//           	
+//           
+        		sourceFile  = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/FT/ft_ratings.dat";
+            	destFile 	= "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/FT/ft_dest.dat";
+//                
 //        	
         	//SML
        /* 	sourceFile  =  "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\sml_myTimedMovieRatings.dat";
@@ -687,9 +690,9 @@ public class MemReader implements Serializable
         /*	sourceFile  = "C:/Users/Musi/Desktop/movie_ml_5/movie_ml/ml_data_10M/ratings_Normalized.dat";
         	destFile    = "C:/Users/Musi/Desktop/movie_ml_5/movie_ml/ml_data_10M/ml10_StoredNorRatings.dat";*/
         		
-        	sourceFile  = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/sml_ratings.dat";
-        	destFile 	= "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/SML_ML_dest.dat";
-            
+//        	sourceFile  = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/sml_ratings.dat";
+//        	destFile 	= "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/SML_ML_dest.dat";
+//            
         	/*sourceFile = "C:/Users/Musi/Desktop/movie_ml_5/movie_ml/ft_data_5/ft_myNorRatingsBoth1.dat";
             destFile   = "C:/Users/Musi/Desktop/movie_ml_5/movie_ml/ft_data_5/ft_myNorStoredRatingsBoth1.dat";
             */
@@ -827,7 +830,7 @@ public class MemReader implements Serializable
 	   	if(feature == true)
 	   	{
 		   	// Read Genre from a file
-		   	  reader.readGenre(smlGenrePath);
+//		   	  reader.readGenre(smlGenrePath);
 		   	
 		   	//Read Features from Memory
 //	       	   reader.readFeaturesFromMem();   	

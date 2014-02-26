@@ -395,7 +395,9 @@ int 					minUsersAndMov;		//For FT1, and FT5
 	 	 	 
 	  String 	m="", 	p="";
 	  int folding 		= 5;
-	  int dataSetChoice = 0;		//0 = sml, 1=ml, 2=ft
+//	  int dataSetChoice = 0;		//0 = sml, 1=ml, 2=ft
+	  int dataSetChoice = 2;		//0 = sml, 1=ml, 2=ft
+	  
 	  
 	  System.out.println(" Going to divide data into K folds");
 	  
@@ -441,8 +443,13 @@ int 					minUsersAndMov;		//For FT1, and FT5
 		
 		//give the appropriate file of FT1 or FT5 
 	    else if (dataSetChoice ==2){
-	    	m =  "I:/Backup main data march 2010/workspace/MusiRecommender/DataSets/FT/Itembased/FiveFoldData/ft_myNorStoredRatingsBoth1.dat";
-		    p  = "I:/Backup main data march 2010/workspace/MusiRecommender/DataSets/FT/Itembased/FiveFoldData/";
+//	    	m =  "I:/Backup main data march 2010/workspace/MusiRecommender/DataSets/FT/Itembased/FiveFoldData/ft_myNorStoredRatingsBoth1.dat";
+//		    p  = "I:/Backup main data march 2010/workspace/MusiRecommender/DataSets/FT/Itembased/FiveFoldData/";
+		  
+	    	m = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/FT/ft_dest.dat";
+			 
+			   p = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/FT/";
+		    
 		}
 	  	
 	    

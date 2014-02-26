@@ -1,5 +1,7 @@
 package algorithms.memorybased.KMeansInitialization;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.*;
 
 import algorithms.memorybased.KMeansInitialization.Centroid;
@@ -22,12 +24,15 @@ public abstract class CallInitializationMethods implements KMeansVariant
 	private KMeanRecommender 		kRec;
 	private SimpleKMeans		    kmeans;
 	private static MemHelper 		helper;
+	private BufferedWriter      writeData1;
+	private String 				myPath;
 
 	private int       			howManyClusters;
 	private	int 				callNo;					 //call how many times this file been called
 	private int					myCount;				 //calculate the no. of iterations
 	private Timer227 			timer;
 	private int 				methodVariant;
+	private int 				MAX_ITERATIONS;
 
 	private ArrayList<IntArrayList> 	finalClusters;
 	private OpenIntIntHashMap 			uidToCluster;
@@ -37,6 +42,7 @@ public abstract class CallInitializationMethods implements KMeansVariant
 	private OpenIntIntHashMap   		clusterMap;
 	private boolean 					converged;					  //Algorithm converged or not
 	private static int 				    simVersion;
+	private double 						totalError;
 	    
 /************************************************************************************************/
 
@@ -48,6 +54,7 @@ public abstract class CallInitializationMethods implements KMeansVariant
 		uidToCluster  = new OpenIntIntHashMap();       // <E> is for an element in the arraylist
 		clusterMap 	  = new OpenIntIntHashMap();
 
+		MAX_ITERATIONS =0;
 		myCount   = 0;
 		callNo	  = 0;
 		converged = false;
@@ -65,7 +72,9 @@ public abstract class CallInitializationMethods implements KMeansVariant
 		methodVariant = variant;
 		howManyClusters = kClusters;  
 		callNo			= call;
-		simVersion		= sVersion;	    	
+		simVersion		= sVersion;	    
+		MAX_ITERATIONS 	= iterations;
+		openFile();
 
 		finalClusters 	= constructRecTreeM	(methodVariant,
 											helper.getListOfUsers(), 
@@ -77,8 +86,11 @@ public abstract class CallInitializationMethods implements KMeansVariant
 		//-------------------
 		//This is basically to make a map, a particular user is in which cluster
 
-		IntArrayList cluster;
 
+		
+
+		IntArrayList cluster;
+		
 		for(int i = 0; i < finalClusters.size(); i++)
 		{   
 			cluster = finalClusters.get(i);       
@@ -96,6 +108,7 @@ public abstract class CallInitializationMethods implements KMeansVariant
 			if(t>=40 && t%40==0)
 				System.out.println(); 
 		}
+		closeFile();
 
 
 	}
@@ -207,8 +220,8 @@ public abstract class CallInitializationMethods implements KMeansVariant
 		//Perform the clustering until the clusters converge or until
 		//we reach the maximum number of iterations.    
 
-		//  while(!converged && myCount < MAX_ITERATIONS)        
-		while(!converged)
+		while(!converged && myCount < MAX_ITERATIONS)        
+//		while(!converged)
 		{
 			converged 	 = true;
 
@@ -291,7 +304,7 @@ public abstract class CallInitializationMethods implements KMeansVariant
 			//to the centroids. If everything is working correctly, this 
 			//number should never increase. 
 
-			double 	totalError = 0.0;
+			totalError = 0.0;
 			int 	tempCluster;
 
 			for(int i = 0; i < k; i++)					//Compute for all centroids            
@@ -327,11 +340,13 @@ public abstract class CallInitializationMethods implements KMeansVariant
 
 			}
 			
-			if(myCount >0 && myCount <8) 
+//			if(myCount >0 && myCount <8) 
 				System.out.println("Count = " + myCount + ", Similarity = " + totalError);
-
+//
+				writeResults();
 			//increment count
 			myCount++;
+						
 
 		}//end of while   
 
@@ -700,6 +715,92 @@ public abstract class CallInitializationMethods implements KMeansVariant
 //		return null;
 //	}
 
+/*******************************************************************************************************************/
+ public void openFile()    
+	{
+
+		try {
+			//SML
+			myPath = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/FiveFoldData/";
+			
+			//FT
+//			myPath = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/FT/";
+
+			writeData1 = new BufferedWriter(new FileWriter(myPath + "leftSIM.csv", true));   
+			System.out.println("Result File Created at  ::: "+ myPath + "LEFTSIM");
+						
+			writeData1.append("\n");
+			writeData1.append("Variant");
+			writeData1.append(",");
+			writeData1.append("Number of Clusters");
+			writeData1.append(",");
+			writeData1.append("Number of Iterations");
+			writeData1.append(",");
+			writeData1.append("Similarity");
+			writeData1.append(",");
+			writeData1.append("\n");
+
+
+		}
+
+		catch (Exception E)
+		{
+			System.out.println("error opening the file pointer of Result file");
+			System.exit(1);
+		}
+
+
+	}
+
+	//__________________________________
+
+
+	public void writeResults()    
+	{
+	String name= "";
+		
+		try {
+			
+			name =  getName();
+			
+			writeData1.append(""+ name);
+			writeData1.append(",");
+			writeData1.append(""+ howManyClusters);
+			writeData1.append(",");
+			writeData1.append(""+myCount);
+			writeData1.append(",");
+			writeData1.append(""+totalError);
+			writeData1.append(",");
+			writeData1.append("\n");
+
+
+		}
+
+		catch (Exception E)
+		{
+			System.out.println("error opening the file pointer of result");
+			System.exit(1);
+		}
+
+		
+	}
+
+	public void closeFile()    
+	{
+
+		try {
+
+			writeData1.close();
+			System.out.println("Files closed");
+		}
+
+		catch (Exception E)
+		{
+			System.out.println("error closing the roc file pointer");
+		}
+
+
+	}
 
 
 }

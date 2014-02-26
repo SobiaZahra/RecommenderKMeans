@@ -39,8 +39,8 @@ public class SimpleKMeans extends CallInitializationMethods implements KMeansVar
  
     /**
      * Chooses k users to serve as intial centroids for 
-     * the kMeansPlus algorithm.
-     * Each time, we have to choose the centorid which is at the farthest distant from the current one 
+     * the kMeans algorithm.
+     * Each time, we have to choose the centorid randomly 
      *
      * @param  dataset  The list uids. 
      * @param  k  The number of centroids (clusters) desired. 

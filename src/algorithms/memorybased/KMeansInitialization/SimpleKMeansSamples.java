@@ -91,33 +91,19 @@ public class SimpleKMeansSamples extends CallInitializationMethods implements KM
 
 				}
 				IntArrayList myUsers 	 	= uidToCentroidSim.keys();
-				DoubleArrayList myWeights    =uidToCentroidSim.values();   
+				DoubleArrayList myWeights    =uidToCentroidSim.values(); 
+				uidToCentroidSim.pairsSortedByValue(myUsers, myWeights);
 
 				int totalUsersSize 			= myUsers.size();
-
-				for (int m=0;m<totalUsersSize;m++)
-				{
-					double alfa= 0.3;
-					int uid 			=  myUsers.get(m);
-					double pointXWeight =  myWeights.get(m);
-					double prob 		=  alfa*(pointXWeight);
-
-					uidToCentroidProb.put(uid,prob);		//Uid to Prob
-
-				}
-
-				// sort prob weights in ascending order (So first element has the lowest sim)			
-				IntArrayList    myProbUsers 	 = uidToCentroidProb.keys();
-				DoubleArrayList myProbWeights    = uidToCentroidProb.values();      		  	
-				uidToCentroidSim.pairsSortedByValue(myProbUsers, myProbWeights);
-
-				int toalPossibleC = uidToCentroidProb.size(); 		  
+		  
 
 				// As both are sorted, so it should be in the first index
+				
 
-				for (int j=0;j<toalPossibleC; j++ )
+				for (int j=0;j<totalUsersSize; j++ )
 				{
-					C = myProbUsers.get(j);
+					C = myUsers.get(j);
+
 					int moviesSeenByUser = helper.getNumberOfMoviesSeen(C);
 
 					if( !(centroidAlreadyThere.contains(C)) && moviesSeenByUser>1)

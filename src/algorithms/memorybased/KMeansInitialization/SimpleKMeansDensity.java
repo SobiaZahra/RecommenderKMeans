@@ -58,149 +58,12 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 		System.out.println("       " + getName());
 		System.out.println("=========================================");
 
-//	//------------------------------------------------
-//	//
-//	//			not correct, to be modified yet  
-//	//--------------------------------------------------
-//
-//	ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);
-//	newCentroids = new ArrayList<Centroid>(k);        
-//	IntArrayList allCentroids = new IntArrayList();		    // All distinct chosen centroids              
-//	OpenIntIntHashMap powerUsers	 = new OpenIntIntHashMap();	// All user who seen greater than Movies_threshold movies
-//
-//	int totalPoints			 = dataset.size();			// All users
-//	int C					 = 0;						// Centroid
-//	//	int previousC			 = 0;						// Previous centroid
-//	int possibleC			 = 0;						// A point from dataset
-//	int moviesThreshold		 = 50;						// power user defination
-//	double possibleCSim		 = 0;	 					// Sim of the point from the dataset
-//
-//
-//	//---------------------------
-//	// Find power users
-//	//---------------------------
-//
-//	for(int j=0;j<totalPoints;j++) //for all points
-//	{
-//		possibleC  	   = dataset.get(j);
-//		int moviesSeen = helper.getNumberOfMoviesSeen(possibleC);
-//
-//		if( moviesSeen > moviesThreshold)
-//		{
-//			powerUsers.put(possibleC, moviesSeen);
-//		}
-//	}
-//
-//	int powerUsersSize= powerUsers.size();
-//
-//	IntArrayList myPowerUsers 	 	= powerUsers.keys();
-//	IntArrayList myPowerWeights    = powerUsers.values();      		   
-//	powerUsers.pairsSortedByValue(myPowerUsers, myPowerWeights);
-//
-//	System.out.println("power users found = " + powerUsersSize);
-//
-//	for(int i = 0; i < k; i++) 					//for total number of clusters         
-//	{
-//
-//		//-----------------------------------
-//		// For first loop, we find the point 
-//		// at uniformly random
-//		//-----------------------------------        	
-//
-//		if(i==0) 
-//		{
-//			C = myPowerUsers.get(powerUsersSize-1);
-//			allCentroids.add(C);
-//			chosenCentroids.add( new Centroid (C,helper));
-//			this.centroids = chosenCentroids; 
-//		}
-//
-//		//-----------------------------------
-//		// Now choose points using KMeans Plus 
-//		// 
-//		//-----------------------------------        	
-//
-//		else
-//		{
-//			// good to make it local, as for each new centroid, we want new weights
-//			OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
-//			int currentCentroidsSize = allCentroids.size();
-//			//			int existingCentroid     = 0;
-//			double closestWeight	 = 10;
-//
-//			//------------------------------
-//			// Find sim for only power users
-//			//------------------------------
-//
-//			for(int j=0;j<powerUsersSize;j++) //for all points
-//			{
-//				//Get a point
-//				possibleC  	  = myPowerUsers.get(j);		
-//				//         			closestWeight = 10;
-//
-//				for (int m=0;m<currentCentroidsSize; m++)
-//				{
-//					// Get an existing centroid
-//					//					existingCentroid =  allCentroids.get(m);
-//
-//					//-----------------------------
-//					// Now we find distance of each
-//					// point from closest centroid
-//					// i.e. sim > largest 
-//					//-----------------------------
-//
-//					//Now we find the similarity between a user and the chosen cluster.    
-//					//In fact, we will find the min possibleCSim here(means the farthest distance)
-//					possibleCSim =  findSimWithOtherClusters(possibleC, m);
-//					if(closestWeight == possibleCSim)
-//						closestWeight = possibleCSim;
-//
-//				}
-//
-//				// only add the distance of a point with the closest centorid
-//				uidToCentroidSim.put(possibleC, closestWeight);
-//
-//			} // finsihed finding similarity b/w all users and the chosen centroid
-//
-//			//-----------------------
-//			// Find the next centroid
-//			//-----------------------
-//
-//			// sort weights in ascending order (So first element has the lowest sim)	
-//			IntArrayList myUsers 	 	= uidToCentroidSim.keys();
-//			DoubleArrayList myWeights = uidToCentroidSim.values();
-//			uidToCentroidSim.pairsSortedByValue(myUsers, myWeights);
-//
-//			int toalPossibleC = uidToCentroidSim.size();
-//
-//			// As both are sorted, so it should be in the first index
-//			// Make sure, we have not already added this in the list of centroids
-//			for (int j=toalPossibleC-1;j>0; j-- )
-//			{
-//				C = myUsers.get(j);
-//
-//
-//				if(allCentroids.contains(C)==false)
-//				{	 
-//					allCentroids.add(C);        				  			
-//					break;        					  	
-//				}
-//
-//			} // only the last one will be added
-//
-//			chosenCentroids.add( new Centroid (C,helper));
-//			this.centroids = chosenCentroids; 
-//
-//		} //end of else
-//
-//
-//	}
-
 		ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);        
 		IntArrayList allCentroids = new IntArrayList();		  // All distinct chosen centroids              
 		int totalPoints		 = dataset.size();			// All users
 		int seedID		  	 = 0;						// Centroid
-	
+		for(int p = 0; p < k; p++) 					//for total number of clusters         
+		{
 		
 		// Finding the "Average pairwise Euclidean distance" (d1)
 		double d1 = 0;
@@ -246,14 +109,14 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 		uidToDensityCount.pairsSortedByValue(myCandidateSeeds, myCandidateDensity);
 
 		int totalPossibleC = myCandidateSeeds.size();
-		chosenCentroids = addCentroids (allCentroids, 
-										myCandidateSeeds, 
-										chosenCentroids, 
-										totalPossibleC, 
-										d1, 
-										k,
-										true); // do we need to check condition
-			 
+//		chosenCentroids = addCentroids (allCentroids, 
+//										myCandidateSeeds, 
+//										chosenCentroids, 
+//										totalPossibleC, 
+//										d1, 
+//										k,
+//										true); // do we need to check condition
+//			 System.out.println("userssss" + totalPossibleC);
 		
 		// Check if all K centroids have been chosen
 		// if not, DONT check the condition and add the candidate 
@@ -264,11 +127,10 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 							  chosenCentroids, 
 							  totalPossibleC, 
 							  d1, 
-							  k,
-							  false); // do we need to check condition
+							  k); // do we need to check condition
 
 		} //end if
-			 
+		}
 		System.out.println("Size of the cluster is = "+ chosenCentroids.size());
 		return chosenCentroids;
 
@@ -294,8 +156,7 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
     						    ArrayList<Centroid> chosenCentroids,
     						    int totalPossibleC, 
     						    double d1, 
-    						    int k,
-    						    boolean checkCondition) {
+    						    int k) {
     	
     	boolean isConditionTrue = true;
     	int seedID = 0;
@@ -306,16 +167,16 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 			// For first seed, it is simple
 			if(j == totalPossibleC-1) {
 				seedID = myCandidateSeeds.get(j);
+				chosenCentroids.add( new Centroid (seedID,helper)); // add centroid
 			}
 			// For rest of the seeds, it is conditioned that "remaining seeds are chosen by decreasing density, 
 			// with the restriction that all remaining seeds must be distance "d1" away from all previous seeds"
 			else {
-				   if(checkCondition)
+				   
 					   isConditionTrue = checkCondition(allCentroids,seedID, d1);
-				   else
-					   isConditionTrue = true;
-			}
-			
+//			
+//			}
+//			
 			if( (allCentroids.contains(seedID)==false) &&  isConditionTrue) {	 
 				allCentroids.add(seedID);
 				chosenCentroids.add( new Centroid (seedID,helper)); // add centroid
@@ -323,7 +184,8 @@ public class SimpleKMeansDensity  extends CallInitializationMethods implements K
 			
 			if(allCentroids.size() ==k) {
 				break;
-			}			
+			}		
+		}
 		} // only the last one will be added
 		
 		return chosenCentroids;

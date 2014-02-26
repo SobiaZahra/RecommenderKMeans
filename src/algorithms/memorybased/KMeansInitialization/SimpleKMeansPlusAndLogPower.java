@@ -1,5 +1,7 @@
 package algorithms.memorybased.KMeansInitialization;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.*;
 
 import algorithms.memorybased.KMeansInitialization.Centroid;
@@ -31,6 +33,9 @@ public class SimpleKMeansPlusAndLogPower
 
 	    private ArrayList<IntArrayList> 	finalClusters;
 	    private OpenIntIntHashMap 			uidToCluster;
+	    private BufferedWriter      writeData1;
+	    private String 				myPath;
+	    private double 				totalError;
 	    
 	    ArrayList<Centroid> centroids;
 	    ArrayList<Centroid> newCentroids;
@@ -82,6 +87,7 @@ public class SimpleKMeansPlusAndLogPower
 	    	simVersion			= sVersion;
 	    	simThreshold		= sThreshold;
 	    	powerUserThreshold  = pThreshold;
+	    	openFile();
 	    	
 	    	wantToCallCentroidSelection = callCentroidOrNot;
 	    	this.allCentroids	=  allCentroids ; 
@@ -112,7 +118,7 @@ public class SimpleKMeansPlusAndLogPower
 	        	System.out.println(); 
 	        }
 	        
-	        
+	        closeFile();
 	       }
 
 	    /************************************************************************************************/
@@ -215,8 +221,8 @@ public class SimpleKMeansPlusAndLogPower
 	        	timer.start();	              
 	        	// this.centroids = choosePlusLogPowerCentroids(dataset, orgClusterSize);   
 	        	
-	        	this.centroids = choosePlusLogPowerCentroids(dataset, orgClusterSize);
-//	        	this.centroids = chooseLogCentroids_old(dataset, orgClusterSize);
+//	        	this.centroids = choosePlusLogPowerCentroids(dataset, orgClusterSize);
+	        	this.centroids = chooseLogCentroids_old(dataset, orgClusterSize);
 	        	
 		        timer.stop();   
 		        System.out.println("KMeans Plus & Log Power centroids took " + timer.getTime() + " s to select");    	
@@ -229,8 +235,8 @@ public class SimpleKMeansPlusAndLogPower
 	        //we reach the maximum number of iterations.    
 //	        System.out.println(" Going into ietrations..");
 	        
-	  //  while(!converged && myCount < MAX_ITERATIONS)        
-	          while(!converged)
+	    while(!converged && myCount < MAX_ITERATIONS)        
+	    //      while(!converged)
 	          {
 
 	        	  converged 	 = true;
@@ -311,7 +317,7 @@ public class SimpleKMeansPlusAndLogPower
 	        	  //to the centroids. If everything is working correctly, this 
 	        	  //number should never increase. 
 
-	        	  double 	totalError = 0.0;
+	        	  totalError = 0.0;
 	        	  int 	tempCluster;
 
 	        	  for(int i = 0; i < k; i++)					//Compute for all centroids            
@@ -346,9 +352,10 @@ public class SimpleKMeansPlusAndLogPower
 	        			  totalError +=   centroids.get(tempCluster).distanceWithVS(point, i, helper);
 
 	        	  }
-	        	  if(myCount >0 && myCount <8) 
+	        	//  if(myCount >0 && myCount <8) 
 	        		  System.out.println("Count = " + myCount + ", Similarity = " + totalError);
 
+	        	  writeResults();
 	        	  //increment count
 	        	  myCount++;
 
@@ -462,253 +469,7 @@ public class SimpleKMeansPlusAndLogPower
         	
         }
         
-    /**
-     * Chooses k users to serve as intial centroids for 
-     * the kMeansPlus algorithm.
-     * Each time, we have to choose the centorid which is at the farthest distant from the current one 
-     *
-     * @param  dataset  The list uids. 
-     * @param  k  The number of centroids (clusters) desired. 
-     * @return A List of randomly chosen centroids. 
-     */
-    
-    private ArrayList<Centroid> choosePlusLogPowerCentroids(IntArrayList dataset,	//no of users in the database 
-    												int k		  			//how much clusters?
-    										 		)     
-    {
-
-        ArrayList<Centroid> chosenCentroids = new ArrayList<Centroid>(k);
-        
-       if (wantToCallCentroidSelection==1)
-       {
-        newCentroids = new ArrayList<Centroid>(k);        
-                 
-        OpenIntIntHashMap powerUsers	 = new OpenIntIntHashMap();	    // All user who seen greater than Movies_threshold movies
-        
-        int totalPoints			 = dataset.size();			// All users
-        int C					 = 0;						// Centroid
-        int previousC			 = 0;						// Previous centroid
-        int possibleC			 = 0;						// A point from dataset
-        int moviesThreshold		 = powerUserThreshold;	    // power user defination
-        double possibleCSim		 = 0;	 					// Sim of the point from the dataset
-        
-        
-   	    //---------------------------
- 		// Find power users
- 		//---------------------------
- 		
- 	    for(int j=0;j<totalPoints;j++) //for all points
- 		{
- 	    	possibleC  	   = dataset.get(j);
- 	    	int moviesSeen = helper.getNumberOfMoviesSeen(possibleC);
- 	    	
- 	       if( moviesSeen > moviesThreshold)
- 	    	{
- 	    		powerUsers.put(possibleC, moviesSeen);
- 	    	}
- 		}
- 	    
- 	     int powerUsersSize= powerUsers.size();
- 	   
- 	     IntArrayList myPowerUsers 	 	= powerUsers.keys();
- 	     IntArrayList myPowerWeights    = powerUsers.values();      		   
- 	     powerUsers.pairsSortedByValue(myPowerUsers, myPowerWeights);
- 		  
- 	    System.out.println("power users found = " + powerUsersSize);
- 	    
- 	    
-         for(int i = 0; i < k; i++) 					//for total number of clusters         
-         {
-         
-         	//-----------------------------------
-         	// For first loop, we find the point 
-         	// at uniformly random
-         	//-----------------------------------        	
-         	
-         	if(i==0) 
-         	{
-         		C = myPowerUsers.get(powerUsersSize-1);
-         		System.out.println(" movies seen = " + myPowerWeights.get(powerUsersSize-1));
-         		
-         		allCentroids.add(C);
-         		chosenCentroids.add( new Centroid (C,helper));
-         		this.centroids = chosenCentroids; 
-         	}
-         	
-         	//-----------------------------------
-         	// Now choose points using KMeans Plus 
-         	// 
-         	//-----------------------------------        	
-         	
-         	else
-         	{
-         		double bottomSum = 0;	
-         		
-         		OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
-          	    OpenIntDoubleHashMap uidToCentroidProb = new OpenIntDoubleHashMap(); //For KMeans prob counting
-          	    int currentCentroidsSize = allCentroids.size();
-          	    int existingCentroid     = 0;
-           	    double closestWeight	 = 2;
-           	   
-           	    
-         	    //------------------------------
-         		// Find sim for only power users
-         		//------------------------------
-         		       	    
-         		for(int j=0;j<powerUsersSize;j++) //for all points
-         		{
-         			//Get a point
-         			possibleC  	  = myPowerUsers.get(j);		
-         			closestWeight = 1000;
-         			
-         			for (int m=0;m<currentCentroidsSize; m++)
-          			{
-          				// Get an existing centroid
-          				existingCentroid =  allCentroids.get(m);
-  	        			
-  	        			//-----------------------------
-  	        			// Now we find distance of each
-  	        			// point from closest centroid
-  	        			// i.e. sim > largest 
-  	        			//-----------------------------
-  	        			
-  	        			//Now we find the similarity between a user and the chosen cluster.        			
-  	        			possibleCSim =  findSimWithOtherClusters(possibleC, m);
-  	        			if(simVersion<=2 || simVersion==5)					//Add one to all PCC weights
-  	        				possibleCSim = possibleCSim+1;
-  	        			
-  	        			if(possibleCSim!=0)
- 	        				possibleCSim = 1/possibleCSim;
- 	        			else
- 	        				possibleCSim = 1000;
-         			
-  	        			
-  	        			if(possibleCSim < closestWeight)
-  	        				closestWeight = possibleCSim;
-  	        				        			
-          			}         			
-         			
-         			// only add the distance of a point with the closest centorid
-         			uidToCentroidSim.put(possibleC, closestWeight * closestWeight);
-         			bottomSum +=(closestWeight * closestWeight);
-         			
-         		} // finsihed finding similarity b/w all users and the chosen centroid
-         		
-
-         		//-----------------------
-         		// Find the next centroid
-         		// Pro = D(x')^2/sum(D(x)^2)
-         		//-----------------------
-         		
-         		IntArrayList myUsers 	 	= uidToCentroidSim.keys();
-       		  	DoubleArrayList myWeights 	= uidToCentroidSim.values();
-       		  	int totalUsersSize 			= myPowerUsers.size();
-       		  	
-       		  	
-       		  	double total = 0;
-         		for (int m=0;m<totalUsersSize;m++)
-         		{
-         			int uid 			=  myUsers.get(m);
-         			double pointXWeight =  myWeights.get(m);
-         			double prob 		=  pointXWeight / bottomSum;
-         		
-         			
-         		/*	if(prob<0 || prob >=1.0001000000000007)
-         				System.out.println("prob="+prob);
-         			
-         			total+=prob;*/
-         				
-         			uidToCentroidProb.put(uid,prob);		//Uid to Prob
-         		}
-  /*
-         		if(total<0 || total >=1.0001000000000007)
-         		System.out.println(total);*/
-         		
-         		//---------------------------------
-         		//Inverse CDF
-         		//---------------------------------
-         		// sort prob weights in ascending order (So first element has the lowest sim)            		
-         		IntArrayList    myProbUsers 	 = uidToCentroidProb.keys();
-       		  	DoubleArrayList myProbWeights    = uidToCentroidProb.values();      		  	
-         		            		  
-//         		System.out.println(myProbWeights);
-         		
-         		int toalPossibleC = uidToCentroidProb.size();
-
-         		
-         		double myS		= 0;
-         		double myV  	= seedProb();
-         		boolean found   = false;
-         		
-         		for(int j=0;j<toalPossibleC;j++)
-         		{
-         			double p     = myProbWeights.get(j);
-         				   C 	 = myProbUsers.get(j);
-         			
-         			myS  = myS + p;
-         			
-         			if(myV <=myS && allCentroids.contains(C)==false)
-         			{	 
-             				  allCentroids.add(C); 
-             				  found = true;
-             				  break;
-             			  
-         			} //end if
-         			
-         			
-         			//my approach
-      /*   			if(myV <= p && allCentroids.contains(C)==false)
-         			{	 
-             				  allCentroids.add(C); 
-             				  found = true;
-             				  break;
-             			  
-         			} //end if 
- */            			
-         		} //end for
-         		
-         		//If we are not able to find the centroid then add any one
-         		if(found ==false)
-         		{
-             		for (int j=0;j<toalPossibleC; j++ )
-             		 {
-             			  C = myProbUsers.get(j);
-             			  int moviesSeenByUser = helper.getNumberOfMoviesSeen(C);
-             			  
-             			  if( !(allCentroids.contains(C)))
-             			  {	 
-             				  allCentroids.add(C);        				  			
-             				  break;        					  	
-             			   }//end if
-             			  
-             		 } //end for            		  
-         		 }//end if
-         		
-         		  chosenCentroids.add( new Centroid (C,helper));
-          		  this.centroids = chosenCentroids;
-          		  
-         	} //end of else
-         	        	
-         
-         	previousC = C;
-             							 
-         }
-       
-     }
-         
-         //--------------------------
-         if (wantToCallCentroidSelection==0)
-         {
-         	for(int i=0;i<allCentroids.size();i++)
-         	{
-         		  chosenCentroids.add( new Centroid (allCentroids.get(i),helper));             		  
-         	}
-         }
- 
-         
-         return chosenCentroids; 
-     
-    }
+   
     
 /*******************************************************************************************************/
     /**********************************************************************************************/
@@ -1107,6 +868,94 @@ public class SimpleKMeansPlusAndLogPower
     
 	 
  }
+ /*******************************************************************************************************************/
+ public void openFile()    
+	{
+
+		try {
+			//SML
+			myPath = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/FiveFoldData/";
+			
+
+			//FT
+//			myPath = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/FT/";
+
+			writeData1 = new BufferedWriter(new FileWriter(myPath + "leftSIM.csv", true));   
+			System.out.println("Result File Created at  ::: "+ myPath + "LEFTSIM");
+						
+			writeData1.append("\n");
+			writeData1.append("Variant");
+			writeData1.append(",");
+			writeData1.append("Number of Clusters");
+			writeData1.append(",");
+			writeData1.append("Number of Iterations");
+			writeData1.append(",");
+			writeData1.append("Similarity");
+			writeData1.append(",");
+			writeData1.append("\n");
+
+
+		}
+
+		catch (Exception E)
+		{
+			System.out.println("error opening the file pointer of Result file");
+			System.exit(1);
+		}
+
+
+	}
+
+	//__________________________________
+
+
+	public void writeResults()    
+	{
+	String name= "SimpleKMeansPlusAndLogPower";
+		
+		try {
+			
+			
+			
+			writeData1.append(""+ name);
+			writeData1.append(",");
+			writeData1.append(""+ howManyClusters);
+			writeData1.append(",");
+			writeData1.append(""+myCount);
+			writeData1.append(",");
+			writeData1.append(""+totalError);
+			writeData1.append(",");
+			writeData1.append("\n");
+
+
+		}
+
+		catch (Exception E)
+		{
+			System.out.println("error opening the file pointer of result");
+			System.exit(1);
+		}
+
+		
+	}
+
+	public void closeFile()    
+	{
+
+		try {
+
+			writeData1.close();
+			System.out.println("Files closed");
+		}
+
+		catch (Exception E)
+		{
+			System.out.println("error closing the roc file pointer");
+		}
+
+
+	}
+
     
  
 /*******************************************************************************************************/

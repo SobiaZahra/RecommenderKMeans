@@ -119,11 +119,12 @@ public class NormalizeScale
   public static void main(String arg[])  
   {
 	  
-	    /*String pm  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\FT\\";
-	    String input = pm + "ft_ratings.dat";
+	 String pm = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/FT/";
+//	   String pm  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\FT\\";
+	   // String input = pm + "ft_ratings.dat";
 	    //String input = pm + "ft_mainSet2.dat";
-	    String output = pm + "ft_myRatingsNor.dat";
-	    */
+	    String outputFile = pm + "ft_ratings.dat";
+	    
 	  
 	    /*
 	  	String pm  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\ML_ML\\";
@@ -144,7 +145,7 @@ public class NormalizeScale
 	 
 	  	
 	    
-	    //dis.readDataAndReassi(input);
+//	    dis.readDataAndReassi(input);
 	  	
 	  		
 	  	
@@ -155,10 +156,11 @@ public class NormalizeScale
 	  	
 	    
 	    //BC checking
-	    String pm  = "I:/Backup main data march 2010/Labs and datasets/Compiled Datasets/BookCrossing/BX-CSV-Dump/";
-	    String inputFile = pm + "BX-Book-Ratings.csv";
-	    String outputFile = pm + "BC_NorRatings.dat";
-	    
+//	    String pm  = "I:/Backup main data march 2010/Labs and datasets/Compiled Datasets/BookCrossing/BX-CSV-Dump/";
+//	    String inputFile = pm + "BX-Book-Ratings.csv";
+//	    String outputFile = pm + "BC_NorRatings.dat";
+//	    
+	  //  String outputFile = "ft_ratingConversion.dat";
 	    
 	     NormalizeScale dis= new NormalizeScale(outputFile);
 	    

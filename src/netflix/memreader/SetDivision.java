@@ -357,7 +357,7 @@ public String getPath(int n)
   
   public static void main(String arg[])  
   {	  
-	    int dataSetChoice 		   = 2;			// 0=sml, 1=ml, 2=ft, 3= ml10
+	    int dataSetChoice 		   = 0;			// 0=sml, 1=ml, 2=ft, 3= ml10
 	   	int	trainingOrAllDivision  = 1;			// 0 =all, 1=training
 	   	
 	    //This movie should be included by that much no. of users for consideration, and same for users
@@ -372,11 +372,17 @@ public String getPath(int n)
 	    
 	    if(dataSetChoice ==0)
 	    {
-		    t  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\sml_TestSet5.dat";
-		    tr = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\sml_TrainSet5.dat";
-		    tAndTr = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\sml_MainSet5.dat";
-		    p  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\";
-		    pm  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\";
+//		    t  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\sml_TestSet5.dat";
+//		    tr = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\sml_TrainSet5.dat";
+//		    tAndTr = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\sml_MainSet5.dat";
+//		    p  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\";
+//		    pm  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\Clustering\\";
+		    
+	    	t = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/SML_ML_destTest.dat"; 
+	    	tr = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/SML_ML_destTrain.dat"; 
+	    	tAndTr = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/SML_ML_destMAin.dat"; 
+	    	p = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/"; 
+	    	pm = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/SML_ML/"; 
 	
 		    
 	/*	    t  = "C:\\Users\\Musi\\workspace\\MusiRecommender\\DataSets\\SML_ML\\NB\\sml_TestSet.dat";
@@ -392,7 +398,8 @@ public String getPath(int n)
 		    p  = "C:/Users/Musi/workspace/MusiRecommender/DataSets/SML_ML/SVD/FiveFoldData/";
 		    pm  = "C:/Users/Musi/workspace/MusiRecommender/DataSets/SML_ML/SVD/FiveFoldData/";	*/    
 	 	  
-		    m = pm + "sml_storedFeaturesRatingsTF.dat";
+//		    m = pm + "sml_storedFeaturesRatingsTF.dat";
+	    	m= pm + "SML_ML_dest.dat";
 	    	
 	    	
 /*	    	//To filter the movies
@@ -495,19 +502,27 @@ public String getPath(int n)
 
 	    	 //SVDs
 	    	 int xFactor = 20;	    	 
-	    	 String path ="I:/Backup main data march 2010/workspace/MusiRecommender/DataSets/FT/Itembased/FiveFoldData/" ;
+//	    	 String path ="I:/Backup main data march 2010/workspace/MusiRecommender/DataSets/FT/Itembased/FiveFoldData/" ;
 
+//	    	 t  	= 		path +  "ft_TestSet.dat";
+//	    	 tr 	=  		path +  "ft_TrainSet.dat";
+//	    	 tAndTr =  	    path +  "ft_MainSet.dat";
+//	    	 p  	= 		path ;
+//	    	 pm  	= 		path;
+	    	 
+	    //	String path = "C:/Users/Sobia/tempRecommender/GitHubRecommender/netflix/netflix/DataSets/FT_Dataset";
+	    	String path = "C:/Users/Sobia/workspaceShared111/KMeansInitialization/DataSets/FT_Dataset/";
     	 	 t  	= 		path +  "ft_TestSet.dat";
 	    	 tr 	=  		path +  "ft_TrainSet.dat";
 	    	 tAndTr =  	    path +  "ft_MainSet.dat";
 	    	 p  	= 		path ;
 	    	 pm  	= 		path;
 		    
-	    	  m  =  pm + "ft_myNorStoredRatingsBoth5.dat";
+	    	  m  =  pm + "ft_ratings.dat";
 	        //m  =  pm + "ft_storedFeaturesRatingsTF10.dat";
 	    	  
 	    	 //do not need to filter mvoies
-			  trainSetName = p + "ft_clusteringTrainSetStoredTF5.dat";
+			  trainSetName = p + "ft_ratings.dat";
 		      testSetName = p + "ft_clusteringTestSetStoredTF5.dat";		  	
 			  trainAndTestSetName = p + "ft_modifiedStoredFeaturesRatingsTF5.dat";
 			  
@@ -520,7 +535,7 @@ public String getPath(int n)
 			    	 p  	= 		path ;
 			    	 pm  	= 		path;
 				    
-			    	  m  =  pm + "ft_clusteringTrainSetStoredTF5.dat";
+			    	  m  =  pm + "ft_ratings.dat";
 			        //m  =  pm + "ft_storedFeaturesRatingsTF10.dat";
 			    	  
 			    	 //do not need to filter mvoies

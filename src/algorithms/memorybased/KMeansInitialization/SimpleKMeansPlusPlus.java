@@ -154,32 +154,47 @@ public class SimpleKMeansPlusPlus  extends CallInitializationMethods implements 
 					DoubleArrayList myWeights 	= uidToCentroidSim.values();
 					int totalUsersSize 			= myUsers.size();
 
+					 // Sum the probability through the squared min distances again,
+					double prob = 0.0;
 					for (int m=0;m<totalUsersSize;m++)
 					{
 						int uid 			=  myUsers.get(m);
 						double pointXWeight =  myWeights.get(m);
-						double prob 		=  (pointXWeight * pointXWeight) / bottomSum;
+					    prob 		=  (pointXWeight * pointXWeight) / bottomSum;
+	
+//						prob +=prob;						
+//						uidToCentroidProb.put(uid,prob);		//Uid to Prob
+//					}
+//					System.out.println ("prob::" + prob);
+					  
+					    // Add one new data point as a center. Each point x is chosen with
+		            // probability proportional to D(x)2
+		            final double r = rand.nextDouble()* prob;
 
-						uidToCentroidProb.put(uid,prob);		//Uid to Prob
-					}
-
+		    
 					// sort prob weights in ascending order (So first element has the lowest sim)	
 
-					IntArrayList    myProbUsers 	 = uidToCentroidProb.keys();
-					DoubleArrayList myProbWeights    = uidToCentroidProb.values();      		  	
-					uidToCentroidSim.pairsSortedByValue(myProbUsers, myProbWeights);
-
-					int toalPossibleC = uidToCentroidProb.size();
-
-					// As both are sorted, so it should be in the first index
-					// Make sure, we have not already added this in the list of centroids
-					for (int j=0;j<toalPossibleC; j++ )
-					{
-						C = myProbUsers.get(j);
+//					IntArrayList    myProbUsers 	 = uidToCentroidProb.keys();
+//					DoubleArrayList myProbWeights    = uidToCentroidProb.values();      		  	
+//					//uidToCentroidSim.pairsSortedByValue(myProbUsers, myProbWeights);
+//
+//					int toalPossibleC = uidToCentroidProb.size();
+//					
+//
+//					// As both are sorted, so it should be in the first index
+//					// Make sure, we have not already added this in the list of centroids
+//					//  stopping when prob >= r.       
+//					
+//					for (int j=0;j<toalPossibleC; j++ )
+//					{
+//						C = myProbUsers.get(j);
+		            C= myUsers.get(m);
 						int moviesSeenByUser = helper.getNumberOfMoviesSeen(C);
 
 						if( !(allCentroids.contains(C)) && moviesSeenByUser>1)
 						{	 
+							prob +=prob;
+							if (prob >= r)
 							allCentroids.add(C);        				  			
 							break;        					  	
 						}

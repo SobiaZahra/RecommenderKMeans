@@ -84,7 +84,7 @@ public class SimpleKMeansUniform extends CallInitializationMethods implements KM
 			
 			for(int i = 0; i < k; i++)         
 			{     
-				System.out.println("Inside K clusers");
+//				System.out.println("Inside K clusers");
 				OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
 
 				//------------------------------

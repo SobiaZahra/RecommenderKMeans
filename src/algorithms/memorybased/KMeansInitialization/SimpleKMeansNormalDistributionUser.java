@@ -71,11 +71,11 @@ public class SimpleKMeansNormalDistributionUser  extends CallInitializationMetho
 			IntArrayList centroidAlreadyThere	= new IntArrayList();   
 			int C								= 0;
 
-			// double avg; 
-			double avgMov;
+			 double avg; 
+//			double avgMov;
 
-			//avg= helper.getGlobalAverage();
-			avgMov= helper.getGlobalMovAverage();
+			avg= helper.getGlobalAverage();
+//			avgMov= helper.getGlobalMovAverage();
 			Normal norm ;
 			int number;
 
@@ -89,7 +89,7 @@ public class SimpleKMeansNormalDistributionUser  extends CallInitializationMetho
 					//------------------ 			
 
 					eng= Normal.makeDefaultGenerator();
-					norm = new Normal(avgMov, 0.05, eng);
+					norm = new Normal(avg, 0.05, eng);
 					//norm = new Normal(avg, 0.1, eng);
 					number= (int) norm.nextInt();
 

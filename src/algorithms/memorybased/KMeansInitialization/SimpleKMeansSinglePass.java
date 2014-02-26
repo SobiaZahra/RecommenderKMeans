@@ -61,8 +61,6 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 		
 {
 
-	
-	
 	//-----------------------------------
 	//to be completed yet.... in progress
 	//------------------------------------
@@ -86,118 +84,128 @@ public ArrayList<Centroid> chooseCentroids(int variant, IntArrayList dataset,int
 	double possibleCSim		 = 0;	 					// Sim of the point from the dataset
 	IntArrayList myUsers = null;
 	DoubleArrayList myWeights = null;
-
+	IntArrayList mySimUsers = null;
+	DoubleArrayList mySimWeights = null;
 
 	avg= helper.getGlobalAverage();
 	//     avgMov= helper.getGlobalMovAverage();
 
 	int avgI					= (int)avg;
 	OpenIntDoubleHashMap uidToUidSim = new OpenIntDoubleHashMap();	
-	for(int j=0;j<totalPoints;j++) //for all points
-	{
-		//Get a point
-		possibleC  	   = dataset.get(j);
+	
+	// Finding the "Average pairwise Euclidean distance" (d1)
 
-		double distance = 0 ;
-		/////////////////
-		for(int m=0;m<totalPoints;m++) //for all points
+		double d1 = 0;
+		for (int i=0;i<totalPoints-1;i++) {
+			int user1 = i;
+			for (int j=i+1;j<totalPoints;j++) {
+				int user2 = j;
+				d1  += findEucledianDistanceBetweenTwoEntities (user1, user2, true);		
+			}
+			uidToUidSim.put(i, d1);
+		}
+
+
+		mySimUsers 	 	= uidToUidSim.keys();
+		mySimWeights    =uidToUidSim.values();      		   
+		uidToUidSim.pairsSortedByValue(mySimUsers, mySimWeights);
+
+		int totalPossibleC = uidToUidSim.size();   
+		System.out.println( " totalpossibleC " + totalPossibleC);
+		System.out.println( " points sim " + uidToUidSim);
+	
+//		int  	min = myUsers.get(1);
+//		int 	max= myUsers.get(totalPossibleC-1);
+//		double 	minDistance = myWeights.get(1);
+//		double 	maxDistance= myWeights.get(totalPossibleC-1);
+//
+//		/////////////////////
+//		System.out.println( " min uid is ::: " + min + " min distance :: " + minDistance);
+//		System.out.println( " max uid is ::: " + max + " max distance :: " + maxDistance);
+//		System.out.println( "******************************************************* ");
+//		/////////////////
+
+
+		for(int p = 0; p < k; p++) 					//for total number of clusters         
 		{
+//		for (int j=1;j<totalPossibleC; j++ )
+//		{
+//			
+//			C = myUsers.get(j);
+			if (p==0)
+			{
+				C = myUsers.get(1);
+				centroids.add( new Centroid (C,helper));
+				chosenCentroids.add(C);
+			}
+				
+			else 
+				
+			{
+//				for (int j=1;j<totalPossibleC; j++ )
+//				{
+//					
+//					C = myUsers.get(j);
 
-			distance = findSimPCCBetweenACentroidAndUser(j,m);
-			distance += distance;
+			// good to make it local, as for each new centroid, we want new weights
+			OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
+			int currentCentroidsSize = chosenCentroids.size();
+			int existingCentroid     = 0;
+			double closestWeight	 = 2;
+
+			for(int j=0;j<totalPoints;j++) //for all points
+			{
+				//Get a point
+				possibleC  	  = myUsers.get(j);		
+				closestWeight = 10;
+
+				for (int m=0;m<currentCentroidsSize; m++)
+				{
+					// Get an existing centroid
+					existingCentroid =  chosenCentroids.get(m);
+
+					//-----------------------------
+					// Now we find distance of each
+					// point from closest centroid
+					// i.e. sim > largest 
+					//-----------------------------
+
+					//Now we find the similarity between a user and the chosen cluster.        			
+					possibleCSim =  findSimVSBetweenACentroidAndUser(existingCentroid, possibleC);
+					if(possibleCSim < closestWeight)
+						closestWeight = possibleCSim;
+
+				}
+
+				// only add the distance of a point with the closest centroid
+				uidToCentroidSim.put(possibleC, closestWeight);
 
 
+			} // finished finding similarity b/w all users and the chosen centroid
+
+			//-----------------------
+			// Find the next centroid
+			//-----------------------
+
+			// sort weights in ascending order (So first element has the lowest sim)	
+			 myUsers = uidToCentroidSim.keys();
+			 myWeights = uidToCentroidSim.values();
+			 uidToCentroidSim.pairsSortedByValue(myUsers, myWeights);
+
+			int toalPossibleC = uidToCentroidSim.size();
+			
+				
+			if( !(centroidAlreadyThere.contains(C)))
+			{	 
+				centroidAlreadyThere.add(C);        				  			
+				break;        					  	
+			}
 
 		}
-		uidToUidSim.put(j, distance);
-		/////////////////////
-		myUsers 	 	= uidToUidSim.keys();
-		myWeights    =uidToUidSim.values();      		   
-		uidToUidSim.pairsSortedByValue(myUsers, myWeights);
-
-		//	     	int totalPossibleC = uidToCentroidSim.size();   
-
+		centroids.add( new Centroid (C,helper));
+		chosenCentroids.add(C);
 	}
-	int  	min = myUsers.get(0);
-	int 	max= myUsers.get(totalPoints-1);
-	double 	minDistance = myWeights.get(0);
-	double 	maxDistance= myWeights.get(totalPoints-1);
-
-	/////////////////////
-	System.out.println( " min uid is ::: " + min + " min distance :: " + minDistance);
-	System.out.println( " max uid is ::: " + max + " max distance :: " + maxDistance);
-	System.out.println( "******************************************************* ");
-	/////////////////
-	for(int i = 0; i < k; i++)         
-	{     OpenIntDoubleHashMap uidToCentroidSim = new OpenIntDoubleHashMap();	
-
-
-	//------------------------------
-	// Find sim to centroid
-	//------------------------------
-
-	// 	for(int j=0;j<totalPoints;j++) //for all points
-	// 	{
-	// 		//Get a point
-	// 		possibleC  	   = dataset.get(j);
-	// 		
-	// 		double distance = 0 ;
-	// 		/////////////////
-	// 		for(int m=0;m<totalPoints;m++) //for all points
-	//     	{
-	// 			 distance = findSimPCCBetweenACentroidAndUser(j,m);
-	// 			 distance += distance;
-	// 			
-	//     	
-	//     	}
-	// 		uidToUidSim.put(j, distance);
-	// 		System.out.println( "uid is ::: " + j + " Sum Distance is :: " + distance);
-	// 		
-	// 		/////////////////
-	// 		possibleCSim =  findSimPCCBetweenACentroidAndUser(possibleC, avgI);
-	// 		uidToCentroidSim.put(possibleC, possibleCSim);
-	//
-	// 	}
-	// 	IntArrayList myUsers 	 	= uidToCentroidSim.keys();
-	// 	DoubleArrayList myWeights    =uidToCentroidSim.values();      		   
-	// 	uidToCentroidSim.pairsSortedByValue(myUsers, myWeights);
-
-	// 	int totalPossibleC = uidToCentroidSim.size();   
-	// 	int  	min = myUsers.get(1);
-	// 	int 	max= myUsers.get(totalPoints-1);
-	while(true)        		
-	{   
-		//------------------
-		//Uniform distribution 
-		//------------------
-
-		Uniform unif;
-		unif=new Uniform(0,k,avgI);
-		number= unif.nextInt();
-
-		//-------------------------------
-		//Uniform distribution with min max
-		//--------------------------------
-
-		//  			number= Uniform.staticNextIntFromTo(min, max);
-
-
-		C=dataset.get(number);
-		if(!centroidAlreadyThere.contains(C));
-		{
-			centroidAlreadyThere.add(C);
-			break;
-		}
-	}
-
-	centroids.add( new Centroid (C,helper));
-	chosenCentroids.add(C);
-
-	}
-
 	return centroids;
-
-
 }
 
 
